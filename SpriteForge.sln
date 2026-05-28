@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteCore", "SpriteCore\SpriteCore.csproj", "{716A53CC-D606-46D4-9B64-2AB8C723DA2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteLauncher", "SpriteLauncher\SpriteLauncher.csproj", "{63296DF5-0735-4E52-9430-3BD5A73B49E3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{716A53CC-D606-46D4-9B64-2AB8C723DA2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{716A53CC-D606-46D4-9B64-2AB8C723DA2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{716A53CC-D606-46D4-9B64-2AB8C723DA2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{716A53CC-D606-46D4-9B64-2AB8C723DA2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63296DF5-0735-4E52-9430-3BD5A73B49E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63296DF5-0735-4E52-9430-3BD5A73B49E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63296DF5-0735-4E52-9430-3BD5A73B49E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63296DF5-0735-4E52-9430-3BD5A73B49E3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

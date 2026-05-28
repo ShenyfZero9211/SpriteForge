@@ -1,0 +1,23 @@
+# Build outputs
+bin/
+obj/
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# NuGet
+*.nupkg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Native libraries (should be downloaded/obtained separately)
+SDL2.dll
+
+# Temporary files
+*.tmp
+*.log
