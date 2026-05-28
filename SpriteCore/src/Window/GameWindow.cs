@@ -1,4 +1,5 @@
 using SDL2;
+using SpriteCore.Utils;
 
 namespace SpriteCore.Window;
 
@@ -28,6 +29,7 @@ public class GameWindow : IDisposable
 
         if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO | SDL.SDL_INIT_TIMER) < 0)
         {
+            Log.Error("Window", $"SDL_Init failed: {SDL.SDL_GetError()}");
             throw new Exception($"SDL_Init failed: {SDL.SDL_GetError()}");
         }
 
@@ -41,6 +43,7 @@ public class GameWindow : IDisposable
 
         if (_window == IntPtr.Zero)
         {
+            Log.Error("Window", $"SDL_CreateWindow failed: {SDL.SDL_GetError()}");
             throw new Exception($"SDL_CreateWindow failed: {SDL.SDL_GetError()}");
         }
 
@@ -56,6 +59,7 @@ public class GameWindow : IDisposable
 
         if (_renderer == IntPtr.Zero)
         {
+            Log.Error("Window", $"SDL_CreateRenderer failed: {SDL.SDL_GetError()}");
             throw new Exception($"SDL_CreateRenderer failed: {SDL.SDL_GetError()}");
         }
 
@@ -66,6 +70,7 @@ public class GameWindow : IDisposable
 
         if (_texture == IntPtr.Zero)
         {
+            Log.Error("Window", $"SDL_CreateTexture failed: {SDL.SDL_GetError()}");
             throw new Exception($"SDL_CreateTexture failed: {SDL.SDL_GetError()}");
         }
     }

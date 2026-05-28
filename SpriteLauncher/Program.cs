@@ -1,6 +1,7 @@
 using SpriteCore.Graphics;
 using SpriteCore.Scripting;
 using SpriteCore.Time;
+using SpriteCore.Utils;
 using SpriteCore.Window;
 using SDL2;
 
@@ -18,10 +19,12 @@ class Program
             scriptPath = Path.Combine(AppContext.BaseDirectory, scriptPath);
         }
 
+        Log.Initialize();
+
         if (!File.Exists(scriptPath))
         {
-            Console.WriteLine($"Script not found: {scriptPath}");
-            Console.WriteLine("Usage: SpriteLauncher <path-to-main.lua>");
+            Log.Error("Launcher", $"Script not found: {scriptPath}");
+            Log.Info("Launcher", "Usage: SpriteLauncher <path-to-main.lua>");
             return;
         }
 
@@ -60,11 +63,11 @@ class Program
                 Thread.Sleep(100); // 防抖
                 scriptEngine.LoadScriptFromFile(scriptPath);
                 scriptEngine.CallSetup();
-                Console.WriteLine($"[HotReload] Reloaded: {scriptPath}");
+                Log.Info("HotReload", $"Reloaded: {scriptPath}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[HotReload Error] {ex.Message}");
+                Log.Error("HotReload", ex.Message);
             }
         };
 
@@ -76,6 +79,7 @@ class Program
             P5.FrameCount = timer.FrameCount;
 
             scriptEngine.CallUpdate(timer.DeltaTime);
+            scriptEngine.AudioUpdate();
 
             if (input.IsKeyPressed(SDL.SDL_Keycode.SDLK_ESCAPE))
             {
@@ -93,11 +97,12 @@ class Program
             timer.CapFrameRate(60);
         };
 
-        Console.WriteLine($"Starting SpriteCore with script: {scriptPath}");
+        Log.Info("Launcher", $"Starting SpriteCore with script: {scriptPath}");
         window.Run();
 
         watcher.EnableRaisingEvents = false;
         watcher.Dispose();
-        Console.WriteLine("Goodbye!");
+        Log.Info("Launcher", "Goodbye!");
+        Log.Shutdown();
     }
 }

@@ -43,20 +43,22 @@ public class InputSystem : IDisposable
                 break;
 
             case SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN:
-                if (e.button.button < _mouseButtons.Length)
+                int btnDown = e.button.button - 1;
+                if (btnDown >= 0 && btnDown < _mouseButtons.Length)
                 {
-                    _mouseButtonsDown[e.button.button] = true;
-                    _mouseButtons[e.button.button] = true;
+                    _mouseButtonsDown[btnDown] = true;
+                    _mouseButtons[btnDown] = true;
                 }
                 MouseX = e.button.x;
                 MouseY = e.button.y;
                 break;
 
             case SDL.SDL_EventType.SDL_MOUSEBUTTONUP:
-                if (e.button.button < _mouseButtons.Length)
+                int btnUp = e.button.button - 1;
+                if (btnUp >= 0 && btnUp < _mouseButtons.Length)
                 {
-                    _mouseButtonsUp[e.button.button] = true;
-                    _mouseButtons[e.button.button] = false;
+                    _mouseButtonsUp[btnUp] = true;
+                    _mouseButtons[btnUp] = false;
                 }
                 MouseX = e.button.x;
                 MouseY = e.button.y;
