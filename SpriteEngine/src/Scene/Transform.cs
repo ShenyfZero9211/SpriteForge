@@ -1,6 +1,6 @@
 using SpriteCore.Math;
 
-namespace SpriteEngine.Scene;
+namespace SpriteEngine.Scenes;
 
 /// <summary>
 /// Transform 组件：管理 GameObject 在 2D 世界中的位置、旋转和缩放。

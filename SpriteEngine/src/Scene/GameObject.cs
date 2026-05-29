@@ -1,6 +1,6 @@
 using SpriteCore.Utils;
 
-namespace SpriteEngine.Scene;
+namespace SpriteEngine.Scenes;
 
 /// <summary>
 /// 游戏对象。是场景中所有实体的容器，本身不携带逻辑，通过附加 Component 实现功能。
@@ -20,8 +20,20 @@ public class GameObject
     /// <summary>对象名称</summary>
     public string Name { get; set; }
 
-    /// <summary>标签（用于快速查找）</summary>
-    public string Tag { get; set; } = "Untagged";
+    private string _tag = "Untagged";
+
+    /// <summary>标签（用于快速查找，修改时自动同步场景索引）</summary>
+    public string Tag
+    {
+        get => _tag;
+        set
+        {
+            if (_tag == value) return;
+            Scene?.RemoveFromTagIndexByRef(this);
+            _tag = value;
+            Scene?.AddToTagIndexByRef(this);
+        }
+    }
 
     /// <summary>是否启用（禁用后自身及子对象的 Update 不再调用）</summary>
     public bool Active { get; set; } = true;
@@ -146,7 +158,7 @@ public class GameObject
 
     // ── 生命周期 ──
 
-    internal void InvokeStart()
+    public void InvokeStart()
     {
         if (!Active) return;
         foreach (var c in _components)
@@ -157,7 +169,7 @@ public class GameObject
             child.InvokeStart();
     }
 
-    internal void InvokeUpdate(float dt)
+    public void InvokeUpdate(float dt)
     {
         if (!Active) return;
         foreach (var c in _components)
@@ -168,7 +180,7 @@ public class GameObject
             child.InvokeUpdate(dt);
     }
 
-    internal void InvokeFixedUpdate(float fixedDt)
+    public void InvokeFixedUpdate(float fixedDt)
     {
         if (!Active) return;
         foreach (var c in _components)
@@ -179,7 +191,7 @@ public class GameObject
             child.InvokeFixedUpdate(fixedDt);
     }
 
-    internal void InvokeOnDestroy()
+    public void InvokeOnDestroy()
     {
         foreach (var child in _children.ToList())
             child.InvokeOnDestroy();

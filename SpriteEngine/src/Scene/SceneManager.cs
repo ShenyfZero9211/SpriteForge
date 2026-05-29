@@ -1,4 +1,4 @@
-namespace SpriteEngine.Scene;
+namespace SpriteEngine.Scenes;
 
 /// <summary>
 /// 场景管理器：管理场景的加载、切换、卸载。

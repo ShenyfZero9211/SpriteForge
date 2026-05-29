@@ -1,6 +1,6 @@
 using SpriteCore.Utils;
 
-namespace SpriteEngine.Scene;
+namespace SpriteEngine.Scenes;
 
 /// <summary>
 /// 场景：管理一组 GameObject 的容器。
@@ -125,6 +125,16 @@ public class Scene
             go.InvokeFixedUpdate(fixedDt);
     }
 
+    /// <summary>渲染场景中所有 SpriteRenderer</summary>
+    public void Render(SpriteCore.Graphics.SPGraphics graphics)
+    {
+        foreach (var go in AllObjects)
+        {
+            var renderer = go.GetComponent<SpriteRenderer>();
+            renderer?.Render(graphics);
+        }
+    }
+
     // ── 内部 ──
 
     private void AddToTagIndex(GameObject go)
@@ -151,6 +161,27 @@ public class Scene
 
         foreach (var child in go.Children.ToList())
             RemoveFromTagIndex(child);
+    }
+
+    internal void RemoveFromTagIndexByRef(GameObject go)
+    {
+        if (_tagIndex.TryGetValue(go.Tag, out var list))
+        {
+            list.Remove(go);
+            if (list.Count == 0)
+                _tagIndex.Remove(go.Tag);
+        }
+    }
+
+    internal void AddToTagIndexByRef(GameObject go)
+    {
+        if (!_tagIndex.TryGetValue(go.Tag, out var list))
+        {
+            list = new List<GameObject>();
+            _tagIndex[go.Tag] = list;
+        }
+        if (!list.Contains(go))
+            list.Add(go);
     }
 
     private IEnumerable<GameObject> EnumerateAll()

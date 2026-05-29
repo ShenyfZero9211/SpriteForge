@@ -1,6 +1,6 @@
 using SpriteCore.Math;
 
-namespace SpriteEngine.Scene;
+namespace SpriteEngine.Scenes;
 
 /// <summary>
 /// 所有游戏组件的抽象基类。附加到 GameObject 上，随场景生命周期驱动。
