@@ -128,11 +128,16 @@ public class Scene
     /// <summary>渲染场景中所有 SpriteRenderer</summary>
     public void Render(SpriteCore.Graphics.SPGraphics graphics)
     {
+        var camera = FindWithComponent<Camera>()?.GetComponent<Camera>();
+        camera?.Apply(graphics);
+
         foreach (var go in AllObjects)
         {
             var renderer = go.GetComponent<SpriteRenderer>();
             renderer?.Render(graphics);
         }
+
+        camera?.Restore(graphics);
     }
 
     // ── 内部 ──
