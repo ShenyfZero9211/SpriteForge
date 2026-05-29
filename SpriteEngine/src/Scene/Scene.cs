@@ -1,4 +1,5 @@
 using SpriteCore.Utils;
+using SpriteEngine.Physics;
 
 namespace SpriteEngine.Scenes;
 
@@ -20,6 +21,9 @@ public class Scene
 
     /// <summary>场景中所有对象（包括子对象）的扁平枚举</summary>
     public IEnumerable<GameObject> AllObjects => EnumerateAll();
+
+    /// <summary>物理世界（每个场景独立）</summary>
+    public PhysicsWorld2D PhysicsWorld { get; } = new();
 
     public Scene(string name = "Scene")
     {
@@ -118,11 +122,12 @@ public class Scene
             go.InvokeUpdate(dt);
     }
 
-    /// <summary>调用场景中所有对象的 FixedUpdate</summary>
+    /// <summary>调用场景中所有对象的 FixedUpdate，然后步进物理世界</summary>
     public void FixedUpdate(float fixedDt)
     {
         foreach (var go in _rootObjects.ToList())
             go.InvokeFixedUpdate(fixedDt);
+        PhysicsWorld.Step(fixedDt);
     }
 
     /// <summary>渲染场景中所有 SpriteRenderer</summary>
