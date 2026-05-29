@@ -59,7 +59,10 @@ public static class SP5
     public static void Text(string str, float x, float y) => Graphics?.Text(str, x, y);
 
     // ── 图像 ──
+    public static SPTexture LoadImage(string path) => SPTexture.Load(path);
     public static void Image(SKBitmap bitmap, float x, float y) => Graphics?.Image(bitmap, x, y);
+    public static void Image(SPTexture texture, float x, float y) => Graphics?.Image(texture, x, y);
+    public static void Image(SPTexture texture, float x, float y, float w, float h) => Graphics?.Image(texture, x, y, w, h);
 
     // ── 输入 ──
     public static float MouseX => Input?.MouseX ?? 0;

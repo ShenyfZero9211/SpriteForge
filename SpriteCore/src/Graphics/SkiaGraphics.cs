@@ -119,6 +119,21 @@ public class SkiaGraphics : SPGraphics, IDisposable
         _surface.Canvas.DrawBitmap(bitmap, x, y);
     }
 
+    public override void Image(SPTexture texture, float x, float y)
+    {
+        if (_surface == null || texture?.Bitmap == null) return;
+        ApplyMatrix();
+        _surface.Canvas.DrawBitmap(texture.Bitmap, x, y);
+    }
+
+    public override void Image(SPTexture texture, float x, float y, float w, float h)
+    {
+        if (_surface == null || texture?.Bitmap == null) return;
+        ApplyMatrix();
+        var dest = new SKRect(x, y, x + w, y + h);
+        _surface.Canvas.DrawBitmap(texture.Bitmap, dest);
+    }
+
     // ── 输出到 SDL ──
 
     public override void Present(IntPtr sdlRenderer, IntPtr sdlTexture)

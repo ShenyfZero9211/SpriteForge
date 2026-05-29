@@ -1,5 +1,6 @@
 using SkiaSharp;
 using SpriteCore.Graphics;
+using SpriteEngine.Resource;
 
 namespace SpriteEngine.Scenes;
 
@@ -26,6 +27,9 @@ public class SpriteRenderer : Component
 
     /// <summary>边框粗细</summary>
     public float StrokeWeight { get; set; } = 1;
+
+    /// <summary>绑定的纹理（为 null 时绘制纯色矩形）</summary>
+    public Texture2D? Texture { get; set; }
 
     /// <summary>
     /// 渲染到指定的 SPGraphics 上。
@@ -58,8 +62,15 @@ public class SpriteRenderer : Component
             g.NoStroke();
         }
 
-        g.Fill(Color.Red, Color.Green, Color.Blue);
-        g.Rect(-halfW, -halfH, Width, Height);
+        if (Texture != null)
+        {
+            g.Image(Texture.Texture, -halfW, -halfH, Width, Height);
+        }
+        else
+        {
+            g.Fill(Color.Red, Color.Green, Color.Blue);
+            g.Rect(-halfW, -halfH, Width, Height);
+        }
 
         g.PopMatrix();
     }

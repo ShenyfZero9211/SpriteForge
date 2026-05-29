@@ -81,6 +81,8 @@ public abstract class SPGraphics
     public abstract void TextSize(float size);
     public abstract void Text(string str, float x, float y);
     public abstract void Image(SKBitmap bitmap, float x, float y);
+    public abstract void Image(SPTexture texture, float x, float y);
+    public abstract void Image(SPTexture texture, float x, float y, float w, float h);
 
     // ── 抽象输出 ──
     public abstract void Present(IntPtr sdlRenderer, IntPtr sdlTexture);

@@ -28,6 +28,8 @@ public class CameraTests
         public override void TextSize(float size) { }
         public override void Text(string str, float x, float y) { }
         public override void Image(SKBitmap bitmap, float x, float y) { }
+        public override void Image(SPTexture texture, float x, float y) { }
+        public override void Image(SPTexture texture, float x, float y, float w, float h) { }
         public override void Present(IntPtr sdlRenderer, IntPtr sdlTexture) { }
     }
     [Fact]

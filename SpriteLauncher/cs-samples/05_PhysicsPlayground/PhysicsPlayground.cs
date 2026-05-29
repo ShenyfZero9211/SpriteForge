@@ -2,6 +2,7 @@ using SkiaSharp;
 using SpriteCore.Graphics;
 using SpriteCore.Math;
 using SpriteEngine.Physics;
+using SpriteEngine.Resource;
 using SpriteEngine.Scenes;
 
 namespace SpriteLauncher.CsSamples;
@@ -16,6 +17,8 @@ public class PhysicsPlayground : Sketch
     private float _accumulator;
     private const float FixedDt = 1f / 60f;
     private bool _mouseWasPressed;
+    private readonly ResourceManager _resources = new();
+    private readonly List<string> _texturePaths = new();
     private readonly SKColor[] _palette =
     {
         new SKColor(255, 80, 80),
@@ -34,6 +37,13 @@ public class PhysicsPlayground : Sketch
 
         _scene = new Scene("PhysicsPlayground");
         _scene.PhysicsWorld.Gravity = new Vector2(0, 500);
+
+        // 扫描可用纹理
+        var texDir = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "data", "textures", "ruins");
+        if (Directory.Exists(texDir))
+        {
+            _texturePaths.AddRange(Directory.GetFiles(texDir, "*.png"));
+        }
 
         CreateWalls();
     }
@@ -155,6 +165,7 @@ public class PhysicsPlayground : Sketch
 
         var color = _palette[(int)Random(0, _palette.Length)];
         bool isBox = Random(0f, 1f) > 0.5f;
+        bool hasTexture = _texturePaths.Count > 0 && Random(0f, 1f) > 0.3f;
 
         if (isBox)
         {
@@ -168,6 +179,8 @@ public class PhysicsPlayground : Sketch
             renderer.DrawStroke = true;
             renderer.StrokeColor = SKColors.White;
             renderer.StrokeWeight = 2;
+            if (hasTexture)
+                renderer.Texture = _resources.Load<Texture2D>(_texturePaths[(int)Random(0, _texturePaths.Count)]);
         }
         else
         {
@@ -180,6 +193,8 @@ public class PhysicsPlayground : Sketch
             renderer.DrawStroke = true;
             renderer.StrokeColor = SKColors.White;
             renderer.StrokeWeight = 2;
+            if (hasTexture)
+                renderer.Texture = _resources.Load<Texture2D>(_texturePaths[(int)Random(0, _texturePaths.Count)]);
         }
 
         // 碰撞闪烁特效
