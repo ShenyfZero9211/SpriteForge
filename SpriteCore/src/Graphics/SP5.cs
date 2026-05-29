@@ -68,6 +68,26 @@ public static class SP5
     public static bool IsKeyPressed(int keyCode)
         => Input?.IsKeyPressed((SDL2.SDL.SDL_Keycode)keyCode) ?? false;
 
+    // ── Lua 适配方法（无重载，NLua 可正确匹配可变参数数量）──
+    public static void LuaBackground(float r, float g = -1, float b = -1, float a = 255)
+    {
+        if (g < 0) Background(r);
+        else if (b < 0) Background(r, g, a);
+        else Background(r, g, b, a);
+    }
+
+    public static void LuaFill(float r, float g = -1, float b = -1, float a = 255)
+    {
+        if (g < 0) Fill(r);
+        else Fill(r, g, b, a);
+    }
+
+    public static void LuaStroke(float r, float g = -1, float b = -1, float a = 255)
+    {
+        if (g < 0) Stroke(r);
+        else Stroke(r, g, b, a);
+    }
+
     // ── 环境 ──
     public static long Millis()
         => DateTimeOffset.Now.ToUnixTimeMilliseconds();

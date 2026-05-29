@@ -79,9 +79,9 @@ public class ScriptEngine : IDisposable
     {
         if (_lua == null) return;
 
-        _lua.RegisterFunction("background", null, typeof(SP5).GetMethod("Background", new[] { typeof(float), typeof(float), typeof(float) })!);
-        _lua.RegisterFunction("fill", null, typeof(SP5).GetMethod("Fill", new[] { typeof(float), typeof(float), typeof(float), typeof(float) })!);
-        _lua.RegisterFunction("stroke", null, typeof(SP5).GetMethod("Stroke", new[] { typeof(float), typeof(float), typeof(float), typeof(float) })!);
+        _lua.RegisterFunction("background", null, typeof(SP5).GetMethod("LuaBackground")!);
+        _lua.RegisterFunction("fill", null, typeof(SP5).GetMethod("LuaFill")!);
+        _lua.RegisterFunction("stroke", null, typeof(SP5).GetMethod("LuaStroke")!);
         _lua.RegisterFunction("noStroke", null, typeof(SP5).GetMethod("NoStroke")!);
         _lua.RegisterFunction("noFill", null, typeof(SP5).GetMethod("NoFill")!);
         _lua.RegisterFunction("strokeWeight", null, typeof(SP5).GetMethod("StrokeWeight")!);
