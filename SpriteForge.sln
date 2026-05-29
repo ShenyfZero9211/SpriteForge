@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteCore", "SpriteCore\Sp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteLauncher", "SpriteLauncher\SpriteLauncher.csproj", "{63296DF5-0735-4E52-9430-3BD5A73B49E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleBrowser", "SampleBrowser\SampleBrowser.csproj", "{CD60ABE0-3457-4019-9861-8E4C599F1A98}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{63296DF5-0735-4E52-9430-3BD5A73B49E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63296DF5-0735-4E52-9430-3BD5A73B49E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63296DF5-0735-4E52-9430-3BD5A73B49E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD60ABE0-3457-4019-9861-8E4C599F1A98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD60ABE0-3457-4019-9861-8E4C599F1A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD60ABE0-3457-4019-9861-8E4C599F1A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD60ABE0-3457-4019-9861-8E4C599F1A98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
