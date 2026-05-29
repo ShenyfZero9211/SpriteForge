@@ -14,7 +14,7 @@ public abstract class Sketch
 {
     // 内部引用，由 SketchApp 注入
     internal GameWindow? AppWindow { get; set; }
-    internal Renderer? AppRenderer { get; set; }
+    internal SkiaGraphics? AppGraphics { get; set; }
     internal InputSystem? AppInput { get; set; }
     internal AudioSystem? AppAudio { get; set; }
 
@@ -26,53 +26,53 @@ public abstract class Sketch
     // ── 尺寸 ──
     public void Size(int width, int height)
     {
-        P5.Width = width;
-        P5.Height = height;
+        SP5.Width = width;
+        SP5.Height = height;
         AppWindow?.Resize(width, height);
-        AppRenderer?.Resize(width, height);
+        SP5.Graphics?.Resize(width, height);
     }
 
     // ── 绘图 API（委托给 P5）──
-    public void Background(float gray) => P5.Background(gray);
-    public void Background(float r, float g, float b) => P5.Background(r, g, b);
-    public void Background(float r, float g, float b, float a) => P5.Background(r, g, b, a);
+    public void Background(float gray) => SP5.Background(gray);
+    public void Background(float r, float g, float b) => SP5.Background(r, g, b);
+    public void Background(float r, float g, float b, float a) => SP5.Background(r, g, b, a);
 
-    public void Fill(float gray) => P5.Fill(gray);
-    public void Fill(float r, float g, float b, float a = 255) => P5.Fill(r, g, b, a);
-    public void Stroke(float gray) => P5.Stroke(gray);
-    public void Stroke(float r, float g, float b, float a = 255) => P5.Stroke(r, g, b, a);
-    public void NoStroke() => P5.NoStroke();
-    public void NoFill() => P5.NoFill();
-    public void StrokeWeight(float weight) => P5.StrokeWeight(weight);
+    public void Fill(float gray) => SP5.Fill(gray);
+    public void Fill(float r, float g, float b, float a = 255) => SP5.Fill(r, g, b, a);
+    public void Stroke(float gray) => SP5.Stroke(gray);
+    public void Stroke(float r, float g, float b, float a = 255) => SP5.Stroke(r, g, b, a);
+    public void NoStroke() => SP5.NoStroke();
+    public void NoFill() => SP5.NoFill();
+    public void StrokeWeight(float weight) => SP5.StrokeWeight(weight);
 
-    public void Rect(float x, float y, float w, float h) => P5.Rect(x, y, w, h);
-    public void Ellipse(float x, float y, float w, float h) => P5.Ellipse(x, y, w, h);
-    public void Circle(float x, float y, float r) => P5.Circle(x, y, r);
-    public void Line(float x1, float y1, float x2, float y2) => P5.Line(x1, y1, x2, y2);
+    public void Rect(float x, float y, float w, float h) => SP5.Rect(x, y, w, h);
+    public void Ellipse(float x, float y, float w, float h) => SP5.Ellipse(x, y, w, h);
+    public void Circle(float x, float y, float r) => SP5.Circle(x, y, r);
+    public void Line(float x1, float y1, float x2, float y2) => SP5.Line(x1, y1, x2, y2);
     public void Triangle(float x1, float y1, float x2, float y2, float x3, float y3)
-        => P5.Triangle(x1, y1, x2, y2, x3, y3);
+        => SP5.Triangle(x1, y1, x2, y2, x3, y3);
 
-    public void PushMatrix() => P5.PushMatrix();
-    public void PopMatrix() => P5.PopMatrix();
-    public void Translate(float x, float y) => P5.Translate(x, y);
-    public void Rotate(float angle) => P5.Rotate(angle);
-    public void Scale(float x, float y) => P5.Scale(x, y);
+    public void PushMatrix() => SP5.PushMatrix();
+    public void PopMatrix() => SP5.PopMatrix();
+    public void Translate(float x, float y) => SP5.Translate(x, y);
+    public void Rotate(float angle) => SP5.Rotate(angle);
+    public void Scale(float x, float y) => SP5.Scale(x, y);
 
-    public void TextSize(float size) => P5.TextSize(size);
-    public void Text(string str, float x, float y) => P5.Text(str, x, y);
+    public void TextSize(float size) => SP5.TextSize(size);
+    public void Text(string str, float x, float y) => SP5.Text(str, x, y);
 
     // ── 输入属性 ──
-    public float MouseX => P5.MouseX;
-    public float MouseY => P5.MouseY;
-    public bool MouseIsPressed => P5.MouseIsPressed;
-    public bool IsKeyPressed(int keyCode) => P5.IsKeyPressed(keyCode);
+    public float MouseX => SP5.MouseX;
+    public float MouseY => SP5.MouseY;
+    public bool MouseIsPressed => SP5.MouseIsPressed;
+    public bool IsKeyPressed(int keyCode) => SP5.IsKeyPressed(keyCode);
 
     // ── 环境属性 ──
-    public int Width => P5.Width;
-    public int Height => P5.Height;
-    public float DeltaTime => P5.DeltaTime;
-    public int FrameCount => P5.FrameCount;
-    public long Millis() => P5.Millis();
+    public int Width => SP5.Width;
+    public int Height => SP5.Height;
+    public float DeltaTime => SP5.DeltaTime;
+    public int FrameCount => SP5.FrameCount;
+    public long Millis() => SP5.Millis();
 
     // ── 数学工具（静态方法，直接暴露）──
     public static float Random(float min, float max) => MathUtils.RandomRange(min, max);

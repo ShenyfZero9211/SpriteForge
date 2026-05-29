@@ -79,39 +79,39 @@ public class ScriptEngine : IDisposable
     {
         if (_lua == null) return;
 
-        _lua.RegisterFunction("background", null, typeof(P5).GetMethod("Background", new[] { typeof(float), typeof(float), typeof(float) })!);
-        _lua.RegisterFunction("fill", null, typeof(P5).GetMethod("Fill", new[] { typeof(float), typeof(float), typeof(float), typeof(float) })!);
-        _lua.RegisterFunction("stroke", null, typeof(P5).GetMethod("Stroke", new[] { typeof(float), typeof(float), typeof(float), typeof(float) })!);
-        _lua.RegisterFunction("noStroke", null, typeof(P5).GetMethod("NoStroke")!);
-        _lua.RegisterFunction("noFill", null, typeof(P5).GetMethod("NoFill")!);
-        _lua.RegisterFunction("strokeWeight", null, typeof(P5).GetMethod("StrokeWeight")!);
+        _lua.RegisterFunction("background", null, typeof(SP5).GetMethod("Background", new[] { typeof(float), typeof(float), typeof(float) })!);
+        _lua.RegisterFunction("fill", null, typeof(SP5).GetMethod("Fill", new[] { typeof(float), typeof(float), typeof(float), typeof(float) })!);
+        _lua.RegisterFunction("stroke", null, typeof(SP5).GetMethod("Stroke", new[] { typeof(float), typeof(float), typeof(float), typeof(float) })!);
+        _lua.RegisterFunction("noStroke", null, typeof(SP5).GetMethod("NoStroke")!);
+        _lua.RegisterFunction("noFill", null, typeof(SP5).GetMethod("NoFill")!);
+        _lua.RegisterFunction("strokeWeight", null, typeof(SP5).GetMethod("StrokeWeight")!);
 
-        _lua.RegisterFunction("rect", null, typeof(P5).GetMethod("Rect")!);
-        _lua.RegisterFunction("ellipse", null, typeof(P5).GetMethod("Ellipse")!);
-        _lua.RegisterFunction("circle", null, typeof(P5).GetMethod("Circle")!);
-        _lua.RegisterFunction("line", null, typeof(P5).GetMethod("Line")!);
-        _lua.RegisterFunction("triangle", null, typeof(P5).GetMethod("Triangle")!);
+        _lua.RegisterFunction("rect", null, typeof(SP5).GetMethod("Rect")!);
+        _lua.RegisterFunction("ellipse", null, typeof(SP5).GetMethod("Ellipse")!);
+        _lua.RegisterFunction("circle", null, typeof(SP5).GetMethod("Circle")!);
+        _lua.RegisterFunction("line", null, typeof(SP5).GetMethod("Line")!);
+        _lua.RegisterFunction("triangle", null, typeof(SP5).GetMethod("Triangle")!);
 
-        _lua.RegisterFunction("pushMatrix", null, typeof(P5).GetMethod("PushMatrix")!);
-        _lua.RegisterFunction("popMatrix", null, typeof(P5).GetMethod("PopMatrix")!);
-        _lua.RegisterFunction("translate", null, typeof(P5).GetMethod("Translate")!);
-        _lua.RegisterFunction("rotate", null, typeof(P5).GetMethod("Rotate")!);
-        _lua.RegisterFunction("scale", null, typeof(P5).GetMethod("Scale")!);
+        _lua.RegisterFunction("pushMatrix", null, typeof(SP5).GetMethod("PushMatrix")!);
+        _lua.RegisterFunction("popMatrix", null, typeof(SP5).GetMethod("PopMatrix")!);
+        _lua.RegisterFunction("translate", null, typeof(SP5).GetMethod("Translate")!);
+        _lua.RegisterFunction("rotate", null, typeof(SP5).GetMethod("Rotate")!);
+        _lua.RegisterFunction("scale", null, typeof(SP5).GetMethod("Scale")!);
 
-        _lua.RegisterFunction("text", null, typeof(P5).GetMethod("Text")!);
-        _lua.RegisterFunction("textSize", null, typeof(P5).GetMethod("TextSize")!);
+        _lua.RegisterFunction("text", null, typeof(SP5).GetMethod("Text")!);
+        _lua.RegisterFunction("textSize", null, typeof(SP5).GetMethod("TextSize")!);
 
-        _lua.RegisterFunction("width", null, typeof(P5).GetMethod("GetWidth")!);
-        _lua.RegisterFunction("height", null, typeof(P5).GetMethod("GetHeight")!);
-        _lua.RegisterFunction("millis", null, typeof(P5).GetMethod("Millis")!);
+        _lua.RegisterFunction("width", null, typeof(SP5).GetMethod("GetWidth")!);
+        _lua.RegisterFunction("height", null, typeof(SP5).GetMethod("GetHeight")!);
+        _lua.RegisterFunction("millis", null, typeof(SP5).GetMethod("Millis")!);
     }
 
     private void RegisterInputAPI()
     {
         if (_lua == null) return;
-        _lua.RegisterFunction("mouseX", null, typeof(P5).GetMethod("GetMouseX")!);
-        _lua.RegisterFunction("mouseY", null, typeof(P5).GetMethod("GetMouseY")!);
-        _lua.RegisterFunction("mouseIsPressed", null, typeof(P5).GetMethod("GetMouseIsPressed")!);
+        _lua.RegisterFunction("mouseX", null, typeof(SP5).GetMethod("GetMouseX")!);
+        _lua.RegisterFunction("mouseY", null, typeof(SP5).GetMethod("GetMouseY")!);
+        _lua.RegisterFunction("mouseIsPressed", null, typeof(SP5).GetMethod("GetMouseIsPressed")!);
     }
 
     private void RegisterMathAPI()

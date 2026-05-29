@@ -114,23 +114,23 @@ class Program
         }
 
         using var window = new GameWindow();
-        using var renderer = new Renderer();
+        var graphics = new SkiaGraphics();
         using var input = new InputSystem();
         using var scriptEngine = new ScriptEngine();
         var timer = new GameTimer();
 
         window.Create("SpriteForge", width, height);
-        renderer.Initialize(width, height);
+        graphics.Initialize(width, height);
 
-        P5.Width = width;
-        P5.Height = height;
-        P5.Input = input;
+        SP5.Graphics = graphics;
+        SP5.Width = width;
+        SP5.Height = height;
+        SP5.Input = input;
 
         window.OnEvent += input.HandleEvent;
 
         scriptEngine.Initialize();
         scriptEngine.LoadScriptFromFile(scriptPath);
-        P5.Canvas = renderer.Canvas;
         scriptEngine.CallSetup();
 
         var watcher = new FileSystemWatcher(Path.GetDirectoryName(scriptPath)!, Path.GetFileName(scriptPath))
@@ -157,8 +157,8 @@ class Program
         {
             timer.Update();
             input.PostUpdate();
-            P5.DeltaTime = timer.DeltaTime;
-            P5.FrameCount = timer.FrameCount;
+            SP5.DeltaTime = timer.DeltaTime;
+            SP5.FrameCount = timer.FrameCount;
 
             scriptEngine.CallUpdate(timer.DeltaTime);
             scriptEngine.AudioUpdate();
@@ -171,11 +171,10 @@ class Program
 
         window.OnRender += () =>
         {
-            renderer.BeginFrame();
-            P5.Canvas = renderer.Canvas;
+            graphics.BeginFrame();
             scriptEngine.CallDraw();
-            renderer.EndFrame();
-            renderer.PresentToSdlRenderer(window.SdlRenderer, window.SdlTexture);
+            graphics.EndFrame();
+            graphics.Present(window.SdlRenderer, window.SdlTexture);
             timer.CapFrameRate(60);
         };
 

@@ -12,7 +12,7 @@ namespace SpriteCore.Graphics;
 public class SketchApp : IDisposable
 {
     private GameWindow? _window;
-    private Renderer? _renderer;
+    private SkiaGraphics? _graphics;
     private InputSystem? _input;
     private GameTimer? _timer;
     private AudioSystem? _audio;
@@ -22,7 +22,7 @@ public class SketchApp : IDisposable
         Log.Initialize();
 
         _window = new GameWindow();
-        _renderer = new Renderer();
+        _graphics = new SkiaGraphics();
         _input = new InputSystem();
         _timer = new GameTimer();
 
@@ -39,16 +39,17 @@ public class SketchApp : IDisposable
 
         // 创建窗口（默认尺寸，Sketch.Setup 中可 Size 调整）
         _window.Create(title, defaultWidth, defaultHeight);
-        _renderer.Initialize(defaultWidth, defaultHeight);
+        _graphics.Initialize(defaultWidth, defaultHeight);
 
         // 连接 P5 API
-        P5.Width = defaultWidth;
-        P5.Height = defaultHeight;
-        P5.Input = _input;
+        SP5.Graphics = _graphics;
+        SP5.Width = defaultWidth;
+        SP5.Height = defaultHeight;
+        SP5.Input = _input;
 
         // 注入引用到 Sketch
         sketch.AppWindow = _window;
-        sketch.AppRenderer = _renderer;
+        sketch.AppGraphics = _graphics;
         sketch.AppInput = _input;
         sketch.AppAudio = _audio;
 
@@ -58,17 +59,17 @@ public class SketchApp : IDisposable
         sketch.Setup();
 
         // 如果 Setup 中修改了尺寸，同步到 Renderer
-        if (_renderer.Width != P5.Width || _renderer.Height != P5.Height)
+        if (_graphics.Width != SP5.Width || _graphics.Height != SP5.Height)
         {
-            _renderer.Resize(P5.Width, P5.Height);
+            _graphics.Resize(SP5.Width, SP5.Height);
         }
 
         _window.OnUpdate += () =>
         {
             _timer!.Update();
             _input!.PostUpdate();
-            P5.DeltaTime = _timer.DeltaTime;
-            P5.FrameCount = _timer.FrameCount;
+            SP5.DeltaTime = _timer.DeltaTime;
+            SP5.FrameCount = _timer.FrameCount;
 
             sketch.Update(_timer.DeltaTime);
             _audio?.Update();
@@ -81,11 +82,10 @@ public class SketchApp : IDisposable
 
         _window.OnRender += () =>
         {
-            _renderer!.BeginFrame();
-            P5.Canvas = _renderer.Canvas;
+            _graphics!.BeginFrame();
             sketch.Draw();
-            _renderer.EndFrame();
-            _renderer.PresentToSdlRenderer(_window.SdlRenderer, _window.SdlTexture);
+            _graphics.EndFrame();
+            _graphics.Present(_window.SdlRenderer, _window.SdlTexture);
             _timer!.CapFrameRate(60);
         };
 
@@ -100,7 +100,7 @@ public class SketchApp : IDisposable
     {
         _audio?.Dispose();
         _input?.Dispose();
-        _renderer?.Dispose();
+        _graphics?.Dispose();
         _window?.Dispose();
     }
 }
