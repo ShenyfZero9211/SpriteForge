@@ -25,6 +25,9 @@ public class CircleCollider2D : Component
     /// <summary>弹性系数</summary>
     public float Restitution { get; set; } = 0f;
 
+    /// <summary>是否为触发器（触发器不阻挡物理运动，只触发事件）</summary>
+    public bool IsSensor { get; set; }
+
     private Fixture? _fixture;
 
     public override void Start()
@@ -41,6 +44,7 @@ public class CircleCollider2D : Component
 
         _fixture.Friction = Friction;
         _fixture.Restitution = Restitution;
+        _fixture.IsSensor = IsSensor;
     }
 
     public override void OnDestroy()

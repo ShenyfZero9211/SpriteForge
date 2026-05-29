@@ -38,6 +38,43 @@ public class PhysicsPlayground : Sketch
         CreateWalls();
     }
 
+    /// <summary>
+    /// 碰撞闪烁组件：物体碰撞时瞬间变白，0.1 秒后恢复。
+    /// 展示 OnCollisionEnter 回调的实际用法。
+    /// </summary>
+    private class CollisionFlash : Component
+    {
+        private SpriteRenderer? _renderer;
+        private SKColor _originalColor;
+        private float _timer;
+
+        public override void Start()
+        {
+            _renderer = GameObject?.GetComponent<SpriteRenderer>();
+            if (_renderer != null)
+                _originalColor = _renderer.Color;
+        }
+
+        public override void OnCollisionEnter(Collision2D collision)
+        {
+            if (_renderer != null)
+            {
+                _renderer.Color = SKColors.White;
+                _timer = 0.1f;
+            }
+        }
+
+        public override void Update(float dt)
+        {
+            if (_timer > 0)
+            {
+                _timer -= dt;
+                if (_timer <= 0 && _renderer != null)
+                    _renderer.Color = _originalColor;
+            }
+        }
+    }
+
     private void CreateWalls()
     {
         // 地面
@@ -144,5 +181,8 @@ public class PhysicsPlayground : Sketch
             renderer.StrokeColor = SKColors.White;
             renderer.StrokeWeight = 2;
         }
+
+        // 碰撞闪烁特效
+        go.AddComponent<CollisionFlash>();
     }
 }

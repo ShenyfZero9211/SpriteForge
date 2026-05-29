@@ -1,4 +1,5 @@
 using SpriteCore.Math;
+using SpriteEngine.Physics;
 
 namespace SpriteEngine.Scenes;
 
@@ -50,4 +51,22 @@ public abstract class Component
     /// 当组件所属 GameObject 离开场景或被禁用时调用。
     /// </summary>
     public virtual void OnDisable() { }
+
+    // ── 物理碰撞回调 ──
+
+    /// <summary>
+    /// 当碰撞体开始接触另一个碰撞体时调用。
+    /// 仅在 GameObject 拥有 RigidBody2D + Collider 时生效。
+    /// </summary>
+    public virtual void OnCollisionEnter(Collision2D collision) { }
+
+    /// <summary>
+    /// 当碰撞体停止接触另一个碰撞体时调用。
+    /// </summary>
+    public virtual void OnCollisionExit(Collision2D collision) { }
+
+    /// <summary>
+    /// 当触发器（IsSensor）开始接触另一个碰撞体时调用。
+    /// </summary>
+    public virtual void OnTriggerEnter(Collision2D collision) { }
 }
