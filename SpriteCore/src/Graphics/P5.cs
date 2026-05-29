@@ -40,8 +40,17 @@ public static class P5
     public static void Background(float r, float g, float b, float a)
         => Canvas?.Clear(new SKColor((byte)r, (byte)g, (byte)b, (byte)a));
 
+    public static void Background(float gray)
+        => Canvas?.Clear(new SKColor((byte)gray, (byte)gray, (byte)gray));
+
+    public static void Fill(float gray)
+        => CurrentStyle.FillPaint.Color = new SKColor((byte)gray, (byte)gray, (byte)gray);
+
     public static void Fill(float r, float g, float b, float a = 255)
         => CurrentStyle.FillPaint.Color = new SKColor((byte)r, (byte)g, (byte)b, (byte)a);
+
+    public static void Stroke(float gray)
+        => CurrentStyle.StrokePaint.Color = new SKColor((byte)gray, (byte)gray, (byte)gray);
 
     public static void Stroke(float r, float g, float b, float a = 255)
         => CurrentStyle.StrokePaint.Color = new SKColor((byte)r, (byte)g, (byte)b, (byte)a);

@@ -117,6 +117,14 @@ public class GameWindow : IDisposable
         _running = false;
     }
 
+    public void Resize(int width, int height)
+    {
+        Width = width;
+        Height = height;
+        SDL.SDL_SetWindowSize(_window, width, height);
+        RecreateTexture();
+    }
+
     private void RecreateTexture()
     {
         if (_texture != IntPtr.Zero)

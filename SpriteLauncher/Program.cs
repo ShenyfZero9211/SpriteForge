@@ -1,3 +1,4 @@
+using System.Reflection;
 using SpriteCore.Graphics;
 using SpriteCore.Scripting;
 using SpriteCore.Time;
@@ -9,14 +10,98 @@ class Program
 {
     static void Main(string[] args)
     {
+        // 判断模式
+        if (args.Length > 0 && args[0].EndsWith(".lua", StringComparison.OrdinalIgnoreCase))
+        {
+            RunLua(args[0]);
+            return;
+        }
+
+        if (args.Length > 0 && args[0] == "--sketch" && args.Length > 1)
+        {
+            RunSketchByName(args[1]);
+            return;
+        }
+
+        // 自动发现 C# Sketch 子类
+        var sketchType = FindSketchType();
+        if (sketchType != null)
+        {
+            RunSketch(sketchType);
+            return;
+        }
+
+        // 回退到默认 Lua 示例
+        RunLua("samples/01_HelloSprite/main.lua");
+    }
+
+    // ── C# Sketch 模式 ──
+
+    static Type? FindSketchType()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var sketchTypes = assembly.GetTypes()
+            .Where(t => t.IsSubclassOf(typeof(Sketch)) && !t.IsAbstract)
+            .ToList();
+
+        if (sketchTypes.Count == 0) return null;
+        if (sketchTypes.Count == 1) return sketchTypes[0];
+
+        // 多个时取第一个（按字母序，保证稳定）
+        return sketchTypes.OrderBy(t => t.Name).First();
+    }
+
+    static void RunSketchByName(string name)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var type = assembly.GetTypes()
+            .FirstOrDefault(t => t.IsSubclassOf(typeof(Sketch))
+                && !t.IsAbstract
+                && (t.Name == name || t.FullName == name));
+
+        if (type == null)
+        {
+            Log.Initialize();
+            Log.Error("Launcher", $"Sketch not found: {name}");
+            Log.Info("Launcher", "Usage: SpriteLauncher --sketch <ClassName>");
+            return;
+        }
+
+        RunSketch(type);
+    }
+
+    static void RunSketch(Type sketchType)
+    {
+        var sketch = (Sketch)Activator.CreateInstance(sketchType)!;
+        using var app = new SketchApp();
+        app.Run(sketch, $"SpriteForge - {sketchType.Name}");
+    }
+
+    // ── Lua 模式（原有行为完整保留）──
+
+    static void RunLua(string scriptPath)
+    {
         const int width = 800;
         const int height = 600;
 
-        // 确定脚本路径
-        string scriptPath = args.Length > 0 ? args[0] : "samples/01_HelloSprite/main.lua";
         if (!Path.IsPathRooted(scriptPath))
         {
-            scriptPath = Path.Combine(AppContext.BaseDirectory, scriptPath);
+            // 尝试多个基目录：当前工作目录、AppContext.BaseDirectory
+            string[] bases = new[]
+            {
+                Directory.GetCurrentDirectory(),
+                AppContext.BaseDirectory,
+            };
+
+            foreach (var baseDir in bases)
+            {
+                var candidate = Path.Combine(baseDir, scriptPath);
+                if (File.Exists(candidate))
+                {
+                    scriptPath = candidate;
+                    break;
+                }
+            }
         }
 
         Log.Initialize();
@@ -34,23 +119,20 @@ class Program
         using var scriptEngine = new ScriptEngine();
         var timer = new GameTimer();
 
-        window.Create("SpriteForge - Phase 1", width, height);
+        window.Create("SpriteForge", width, height);
         renderer.Initialize(width, height);
 
-        // 连接 P5 API
         P5.Width = width;
         P5.Height = height;
         P5.Input = input;
 
         window.OnEvent += input.HandleEvent;
 
-        // 加载 Lua 脚本
         scriptEngine.Initialize();
         scriptEngine.LoadScriptFromFile(scriptPath);
         P5.Canvas = renderer.Canvas;
         scriptEngine.CallSetup();
 
-        // 热重载
         var watcher = new FileSystemWatcher(Path.GetDirectoryName(scriptPath)!, Path.GetFileName(scriptPath))
         {
             NotifyFilter = NotifyFilters.LastWrite,
@@ -60,7 +142,7 @@ class Program
         {
             try
             {
-                Thread.Sleep(100); // 防抖
+                Thread.Sleep(100);
                 scriptEngine.LoadScriptFromFile(scriptPath);
                 scriptEngine.CallSetup();
                 Log.Info("HotReload", $"Reloaded: {scriptPath}");
@@ -97,7 +179,7 @@ class Program
             timer.CapFrameRate(60);
         };
 
-        Log.Info("Launcher", $"Starting SpriteCore with script: {scriptPath}");
+        Log.Info("Launcher", $"Starting Lua script: {scriptPath}");
         window.Run();
 
         watcher.EnableRaisingEvents = false;
