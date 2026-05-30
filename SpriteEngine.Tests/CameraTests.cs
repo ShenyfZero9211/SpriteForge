@@ -21,6 +21,7 @@ public class CameraTests
         public override void Resize(int width, int height) { Width = width; Height = height; }
         public override void Background(float r, float g, float b, float a) { }
         public override void Rect(float x, float y, float w, float h) { }
+        public override void RoundRect(float x, float y, float w, float h, float r) { }
         public override void Ellipse(float x, float y, float w, float h) { }
         public override void Circle(float x, float y, float r) { }
         public override void Line(float x1, float y1, float x2, float y2) { }

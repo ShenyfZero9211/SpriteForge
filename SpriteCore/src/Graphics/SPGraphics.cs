@@ -73,6 +73,7 @@ public abstract class SPGraphics
 
     // ── 抽象绘制方法 ──
     public abstract void Rect(float x, float y, float w, float h);
+    public abstract void RoundRect(float x, float y, float w, float h, float cornerRadius);
     public abstract void Ellipse(float x, float y, float w, float h);
     public abstract void Circle(float x, float y, float r);
     public abstract void Line(float x1, float y1, float x2, float y2);

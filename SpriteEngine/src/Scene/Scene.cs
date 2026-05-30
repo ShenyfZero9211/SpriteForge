@@ -1,5 +1,6 @@
 using SpriteCore.Utils;
 using SpriteEngine.Physics;
+using SpriteEngine.UI;
 
 namespace SpriteEngine.Scenes;
 
@@ -24,6 +25,9 @@ public class Scene
 
     /// <summary>物理世界（每个场景独立）</summary>
     public PhysicsWorld2D PhysicsWorld { get; } = new();
+
+    /// <summary>UI 管理器（每个场景独立）</summary>
+    public UIManager UIManager { get; } = new();
 
     public Scene(string name = "Scene")
     {
@@ -114,12 +118,14 @@ public class Scene
 
     // ── 更新 ──
 
-    /// <summary>调用场景中所有对象的 Update</summary>
+    /// <summary>调用场景中所有对象的 Update，然后更新 UI</summary>
     public void Update(float dt)
     {
         // 快照遍历，防止 Update 中修改集合
         foreach (var go in _rootObjects.ToList())
             go.InvokeUpdate(dt);
+
+        UIManager.Update(dt);
     }
 
     /// <summary>调用场景中所有对象的 FixedUpdate，然后步进物理世界</summary>
@@ -130,7 +136,7 @@ public class Scene
         PhysicsWorld.Step(fixedDt);
     }
 
-    /// <summary>渲染场景中所有 SpriteRenderer</summary>
+    /// <summary>渲染场景中所有 SpriteRenderer，然后渲染 UI</summary>
     public void Render(SpriteCore.Graphics.SPGraphics graphics)
     {
         var camera = FindWithComponent<Camera>()?.GetComponent<Camera>();
@@ -142,7 +148,13 @@ public class Scene
             renderer?.Render(graphics);
         }
 
+        // World 空间 UI 随相机一起渲染
+        UIManager.RenderWorldSpace(graphics);
+
         camera?.Restore(graphics);
+
+        // Screen 空间 UI 最后渲染，覆盖在最上层
+        UIManager.Render(graphics);
     }
 
     // ── 内部 ──

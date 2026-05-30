@@ -62,6 +62,12 @@ public class SkiaGraphics : SPGraphics, IDisposable
         DrawWithFillAndStroke(paint => _surface!.Canvas.DrawRect(rect, paint));
     }
 
+    public override void RoundRect(float x, float y, float w, float h, float cornerRadius)
+    {
+        var rect = new SKRect(x, y, x + w, y + h);
+        DrawWithFillAndStroke(paint => _surface!.Canvas.DrawRoundRect(rect, cornerRadius, cornerRadius, paint));
+    }
+
     public override void Ellipse(float x, float y, float w, float h)
     {
         var rect = new SKRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
