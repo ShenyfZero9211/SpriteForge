@@ -116,14 +116,20 @@ public class SkiaGraphics : SPGraphics, IDisposable
     {
         if (_surface == null) return;
         ApplyMatrix();
-        _surface.Canvas.DrawBitmap(bitmap, x, y);
+        if (CurrentStyle.IsTinted)
+            _surface.Canvas.DrawBitmap(bitmap, x, y, GetTintPaint(CurrentStyle.TintColor));
+        else
+            _surface.Canvas.DrawBitmap(bitmap, x, y);
     }
 
     public override void Image(SPTexture texture, float x, float y)
     {
         if (_surface == null || texture?.Bitmap == null) return;
         ApplyMatrix();
-        _surface.Canvas.DrawBitmap(texture.Bitmap, x, y);
+        if (CurrentStyle.IsTinted)
+            _surface.Canvas.DrawBitmap(texture.Bitmap, x, y, GetTintPaint(CurrentStyle.TintColor));
+        else
+            _surface.Canvas.DrawBitmap(texture.Bitmap, x, y);
     }
 
     public override void Image(SPTexture texture, float x, float y, float w, float h)
@@ -131,7 +137,21 @@ public class SkiaGraphics : SPGraphics, IDisposable
         if (_surface == null || texture?.Bitmap == null) return;
         ApplyMatrix();
         var dest = new SKRect(x, y, x + w, y + h);
-        _surface.Canvas.DrawBitmap(texture.Bitmap, dest);
+        if (CurrentStyle.IsTinted)
+            _surface.Canvas.DrawBitmap(texture.Bitmap, dest, GetTintPaint(CurrentStyle.TintColor));
+        else
+            _surface.Canvas.DrawBitmap(texture.Bitmap, dest);
+    }
+
+    private SKPaint GetTintPaint(SKColor tint)
+    {
+        // 使用 BlendMode.Modulate 实现 Processing tint() 语义：
+        // C = Csrc * Ctint, A = Asrc * Atint
+        return new SKPaint
+        {
+            ColorFilter = SKColorFilter.CreateBlendMode(tint, SKBlendMode.Modulate),
+            IsAntialias = true,
+        };
     }
 
     // ── 输出到 SDL ──

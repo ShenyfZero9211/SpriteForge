@@ -84,6 +84,19 @@ public abstract class SPGraphics
     public abstract void Image(SPTexture texture, float x, float y);
     public abstract void Image(SPTexture texture, float x, float y, float w, float h);
 
+    // ── Tint（对应 Processing tint() / noTint()）──
+    public virtual void Tint(float gray, float alpha = 255)
+    {
+        CurrentStyle.IsTinted = true;
+        CurrentStyle.TintColor = new SKColor((byte)gray, (byte)gray, (byte)gray, (byte)alpha);
+    }
+    public virtual void Tint(float r, float g, float b, float a = 255)
+    {
+        CurrentStyle.IsTinted = true;
+        CurrentStyle.TintColor = new SKColor((byte)r, (byte)g, (byte)b, (byte)a);
+    }
+    public virtual void NoTint() => CurrentStyle.IsTinted = false;
+
     // ── 抽象输出 ──
     public abstract void Present(IntPtr sdlRenderer, IntPtr sdlTexture);
 }

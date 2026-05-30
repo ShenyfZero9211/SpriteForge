@@ -132,7 +132,7 @@ public class GameWindow : IDisposable
             SDL.SDL_DestroyTexture(_texture);
         }
         _texture = SDL.SDL_CreateTexture(_renderer,
-            SDL.SDL_PIXELFORMAT_RGBA8888,
+            SDL.SDL_PIXELFORMAT_ABGR8888,
             (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING,
             Width, Height);
     }

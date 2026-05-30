@@ -63,6 +63,9 @@ public static class SP5
     public static void Image(SKBitmap bitmap, float x, float y) => Graphics?.Image(bitmap, x, y);
     public static void Image(SPTexture texture, float x, float y) => Graphics?.Image(texture, x, y);
     public static void Image(SPTexture texture, float x, float y, float w, float h) => Graphics?.Image(texture, x, y, w, h);
+    public static void Tint(float gray, float alpha = 255) => Graphics?.Tint(gray, alpha);
+    public static void Tint(float r, float g, float b, float a = 255) => Graphics?.Tint(r, g, b, a);
+    public static void NoTint() => Graphics?.NoTint();
 
     // ── 输入 ──
     public static float MouseX => Input?.MouseX ?? 0;

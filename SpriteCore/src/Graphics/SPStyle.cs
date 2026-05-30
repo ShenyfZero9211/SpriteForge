@@ -34,6 +34,10 @@ public class SPStyle
     public int RectMode { get; set; } = 0;   // 0=CORNER
     public int EllipseMode { get; set; } = 0; // 0=CENTER
 
+    // Tint (对应 Processing tint())
+    public bool IsTinted { get; set; } = false;
+    public SKColor TintColor { get; set; } = SKColors.White;
+
     public SPStyle Clone()
     {
         return new SPStyle
@@ -54,6 +58,8 @@ public class SPStyle
             ColorModeA = ColorModeA,
             RectMode = RectMode,
             EllipseMode = EllipseMode,
+            IsTinted = IsTinted,
+            TintColor = TintColor,
         };
     }
 }

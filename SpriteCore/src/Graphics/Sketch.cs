@@ -61,6 +61,17 @@ public abstract class Sketch
     public void TextSize(float size) => SP5.TextSize(size);
     public void Text(string str, float x, float y) => SP5.Text(str, x, y);
 
+    // ── 图像 ──
+    public SPTexture LoadImage(string path) => SP5.LoadImage(path);
+    public void Image(SKBitmap bitmap, float x, float y) => SP5.Image(bitmap, x, y);
+    public void Image(SPTexture texture, float x, float y) => SP5.Image(texture, x, y);
+    public void Image(SPTexture texture, float x, float y, float w, float h) => SP5.Image(texture, x, y, w, h);
+
+    // ── Tint ──
+    public void Tint(float gray, float alpha = 255) => SP5.Tint(gray, alpha);
+    public void Tint(float r, float g, float b, float a = 255) => SP5.Tint(r, g, b, a);
+    public void NoTint() => SP5.NoTint();
+
     // ── 输入属性 ──
     public float MouseX => SP5.MouseX;
     public float MouseY => SP5.MouseY;
