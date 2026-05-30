@@ -153,6 +153,31 @@ public class UIButtonTests
     }
 
     [Fact]
+    public void Disabled_DoesNotRespondToEvents()
+    {
+        var btn = new UIButton { Text = "Test", Width = 100, Height = 40, Enabled = false };
+        var consumed = btn.OnEvent(UIEvent.MouseMoved(50, 20));
+        Assert.False(consumed);
+        Assert.False(btn.IsHovered);
+    }
+
+    [Fact]
+    public void Disabled_VisualUsesDisabledColor()
+    {
+        var btn = new UIButton
+        {
+            Text = "Test",
+            Enabled = false,
+            OverrideStyle = new UIStyle { DisabledColor = new SKColor(100, 100, 100) }
+        };
+
+        var method = typeof(UIButton).GetMethod("ResolveBackgroundColor",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var color = (SKColor)method!.Invoke(btn, null)!;
+        Assert.Equal(new SKColor(100, 100, 100), color);
+    }
+
+    [Fact]
     public void OnEvent_Disabled_ReturnsFalse()
     {
         var btn = new UIButton { Text = "Test", Width = 100, Height = 40, Enabled = false };

@@ -60,6 +60,8 @@ public class UIDemo : Sketch
             OverrideStyle = new UIStyle
             {
                 BackgroundColor = new SKColor(45, 45, 58),
+                BorderColor = new SKColor(70, 70, 85),
+                BorderThickness = 1,
                 CornerRadius = 10,
                 Padding = new Thickness(16, 12, 16, 12)
             }
@@ -109,6 +111,8 @@ public class UIDemo : Sketch
             OverrideStyle = new UIStyle
             {
                 BackgroundColor = new SKColor(38, 38, 48),
+                BorderColor = new SKColor(60, 60, 70),
+                BorderThickness = 1,
                 CornerRadius = 10,
                 Padding = new Thickness(16)
             }
@@ -203,6 +207,8 @@ public class UIDemo : Sketch
             OverrideStyle = new UIStyle
             {
                 BackgroundColor = new SKColor(38, 38, 48),
+                BorderColor = new SKColor(60, 60, 70),
+                BorderThickness = 1,
                 CornerRadius = 10,
                 Padding = new Thickness(16)
             }

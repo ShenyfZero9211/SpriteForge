@@ -10,8 +10,15 @@ public class UIManager
 {
     private readonly List<UICanvas> _canvases = new();
     private readonly UIFocusManager _focusManager = new();
+
+    /// <summary>焦点管理器（只读）</summary>
+    public UIFocusManager FocusManager => _focusManager;
     private UIElement? _pressedTarget;
     private UIElement? _hoverTarget;
+
+    /// <summary>检测 Shift 键是否按下。默认使用 SDL，测试中可覆盖。</summary>
+    public Func<bool> IsShiftKeyDown { get; set; } = () =>
+        SDL2.SDL.SDL_GetModState() == SDL2.SDL.SDL_Keymod.KMOD_SHIFT;
 
     // 上一帧输入状态（用于生成 UIEvent）
     private bool _lastMousePressed;
@@ -149,7 +156,7 @@ public class UIManager
             var activeCanvas = _canvases.LastOrDefault(c => c.Space == CanvasSpace.Screen && c.Enabled && c.Visible);
             if (activeCanvas != null)
             {
-                if (SDL2.SDL.SDL_GetModState() == SDL2.SDL.SDL_Keymod.KMOD_SHIFT)
+                if (IsShiftKeyDown())
                     _focusManager.FocusPrevious(activeCanvas);
                 else
                     _focusManager.FocusNext(activeCanvas);
