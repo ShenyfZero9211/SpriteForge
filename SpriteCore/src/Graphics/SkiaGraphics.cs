@@ -58,25 +58,30 @@ public class SkiaGraphics : SPGraphics, IDisposable
 
     public override void Rect(float x, float y, float w, float h)
     {
-        var rect = new SKRect(x, y, x + w, y + h);
+        var rect = ResolveRect(x, y, w, h);
         DrawWithFillAndStroke(paint => _surface!.Canvas.DrawRect(rect, paint));
     }
 
     public override void RoundRect(float x, float y, float w, float h, float cornerRadius)
     {
-        var rect = new SKRect(x, y, x + w, y + h);
+        var rect = ResolveRect(x, y, w, h);
         DrawWithFillAndStroke(paint => _surface!.Canvas.DrawRoundRect(rect, cornerRadius, cornerRadius, paint));
     }
 
     public override void Ellipse(float x, float y, float w, float h)
     {
-        var rect = new SKRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
+        var rect = ResolveEllipseRect(x, y, w, h);
         DrawWithFillAndStroke(paint => _surface!.Canvas.DrawOval(rect, paint));
     }
 
     public override void Circle(float x, float y, float r)
     {
-        DrawWithFillAndStroke(paint => _surface!.Canvas.DrawCircle(x, y, r, paint));
+        // circle() follows ellipseMode in Processing
+        var rect = ResolveEllipseRect(x, y, r * 2, r * 2);
+        float cx = rect.MidX;
+        float cy = rect.MidY;
+        float radius = rect.Width / 2;
+        DrawWithFillAndStroke(paint => _surface!.Canvas.DrawCircle(cx, cy, radius, paint));
     }
 
     public override void Line(float x1, float y1, float x2, float y2)
@@ -97,6 +102,36 @@ public class SkiaGraphics : SPGraphics, IDisposable
         DrawWithFillAndStroke(paint => _surface!.Canvas.DrawPath(path, paint));
     }
 
+    // ── 新增绘制方法 ──
+
+    public override void Point(float x, float y)
+    {
+        if (_surface == null) return;
+        ApplyMatrix();
+        float r = System.Math.Max(1, CurrentStyle.StrokeWeight / 2);
+        using var paint = GetStrokePaint();
+        _surface.Canvas.DrawCircle(x, y, r, paint);
+    }
+
+    public override void Quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+    {
+        using var path = new SKPath();
+        path.MoveTo(x1, y1);
+        path.LineTo(x2, y2);
+        path.LineTo(x3, y3);
+        path.LineTo(x4, y4);
+        path.Close();
+        DrawWithFillAndStroke(paint => _surface!.Canvas.DrawPath(path, paint));
+    }
+
+    public override void Arc(float x, float y, float w, float h, float start, float stop)
+    {
+        var rect = ResolveEllipseRect(x, y, w, h);
+        var path = new SKPath();
+        path.AddArc(rect, start, stop - start);
+        DrawWithFillAndStroke(paint => _surface!.Canvas.DrawPath(path, paint));
+    }
+
     // ── 文字 ──
 
     public override void TextSize(float size)
@@ -109,11 +144,31 @@ public class SkiaGraphics : SPGraphics, IDisposable
         if (_surface == null) return;
         ApplyMatrix();
         using var font = new SKFont { Size = CurrentStyle.TextSize };
-        if (CurrentStyle.Fill)
+        using var paint = GetFillPaint();
+
+        // Horizontal alignment
+        SKTextAlign skAlign = CurrentStyle.TextAlignH switch
         {
-            using var paint = GetFillPaint();
-            _surface.Canvas.DrawText(str, x, y, CurrentStyle.TextAlign, font, paint);
+            SPTextAlignH.CENTER => SKTextAlign.Center,
+            SPTextAlignH.RIGHT => SKTextAlign.Right,
+            _ => SKTextAlign.Left,
+        };
+
+        // Vertical alignment: Processing uses y as baseline by default.
+        // Skia DrawText also uses y as baseline. We adjust for TOP/BOTTOM.
+        float drawY = y;
+        if (CurrentStyle.TextAlignV != SPTextAlignV.BASELINE)
+        {
+            SKFontMetrics metrics = font.Metrics;
+            drawY = CurrentStyle.TextAlignV switch
+            {
+                SPTextAlignV.TOP => y - metrics.Ascent,
+                SPTextAlignV.BOTTOM => y - metrics.Descent,
+                _ => y,
+            };
         }
+
+        _surface.Canvas.DrawText(str, x, drawY, skAlign, font, paint);
     }
 
     // ── 图像 ──
@@ -142,7 +197,7 @@ public class SkiaGraphics : SPGraphics, IDisposable
     {
         if (_surface == null || texture?.Bitmap == null) return;
         ApplyMatrix();
-        var dest = new SKRect(x, y, x + w, y + h);
+        var dest = ResolveImageRect(x, y, w, h);
         if (CurrentStyle.IsTinted)
             _surface.Canvas.DrawBitmap(texture.Bitmap, dest, GetTintPaint(CurrentStyle.TintColor));
         else
@@ -151,8 +206,6 @@ public class SkiaGraphics : SPGraphics, IDisposable
 
     private SKPaint GetTintPaint(SKColor tint)
     {
-        // 使用 CreateBlendMode + Modulate 实现 Processing tint() 语义。
-        // Skia 使用 premultiplied alpha，因此 alpha 调制会体现在 RGB 上。
         return new SKPaint
         {
             ColorFilter = SKColorFilter.CreateBlendMode(tint, SKBlendMode.Modulate),
@@ -181,9 +234,7 @@ public class SkiaGraphics : SPGraphics, IDisposable
 
     // ── 辅助方法 ──
 
-    /// <summary>
-    /// 统一执行 fill + stroke 双重绘制，消除所有形状方法中的重复代码。
-    /// </summary>
+    /// <summary>统一执行 fill + stroke 双重绘制，消除所有形状方法中的重复代码。</summary>
     private void DrawWithFillAndStroke(Action<SKPaint> drawAction)
     {
         if (_surface == null) return;
@@ -226,8 +277,64 @@ public class SkiaGraphics : SPGraphics, IDisposable
             IsAntialias = true,
             Color = CurrentStyle.StrokeColor,
             StrokeWidth = CurrentStyle.StrokeWeight,
-            StrokeCap = CurrentStyle.StrokeCap,
-            StrokeJoin = CurrentStyle.StrokeJoin,
+            StrokeCap = ToSkStrokeCap(CurrentStyle.StrokeCap),
+            StrokeJoin = ToSkStrokeJoin(CurrentStyle.StrokeJoin),
         };
+    }
+
+    // ── 坐标语义解析 ──
+
+    private SKRect ResolveRect(float x, float y, float w, float h)
+    {
+        return CurrentStyle.RectMode switch
+        {
+            SPRectMode.CORNER => new SKRect(x, y, x + w, y + h),
+            SPRectMode.CORNERS => new SKRect(x, y, w, h),
+            SPRectMode.CENTER => new SKRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2),
+            SPRectMode.RADIUS => new SKRect(x - w, y - h, x + w, y + h),
+            _ => new SKRect(x, y, x + w, y + h),
+        };
+    }
+
+    private SKRect ResolveEllipseRect(float x, float y, float w, float h)
+    {
+        return CurrentStyle.EllipseMode switch
+        {
+            SPEllipseMode.CENTER => new SKRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2),
+            SPEllipseMode.CORNER => new SKRect(x, y, x + w, y + h),
+            SPEllipseMode.CORNERS => new SKRect(x, y, w, h),
+            SPEllipseMode.RADIUS => new SKRect(x - w, y - h, x + w, y + h),
+            _ => new SKRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2),
+        };
+    }
+
+    private SKRect ResolveImageRect(float x, float y, float w, float h)
+    {
+        return CurrentStyle.ImageMode switch
+        {
+            SPImageMode.CORNER => new SKRect(x, y, x + w, y + h),
+            SPImageMode.CORNERS => new SKRect(x, y, w, h),
+            SPImageMode.CENTER => new SKRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2),
+            _ => new SKRect(x, y, x + w, y + h),
+        };
+    }
+
+    private static SKStrokeCap ToSkStrokeCap(SPStrokeCap cap)
+    {
+        return cap switch
+        {
+            SPStrokeCap.ROUND => SKStrokeCap.Round,
+            SPStrokeCap.SQUARE => SKStrokeCap.Butt,
+            SPStrokeCap.PROJECT => SKStrokeCap.Square,
+            _ => SKStrokeCap.Round,
+        };
+    }
+
+    private static SKStrokeJoin ToSkStrokeJoin(SPStrokeJoin join)
+    {
+        if (join == SPStrokeJoin.MITER) return SKStrokeJoin.Miter;
+        if (join == SPStrokeJoin.BEVEL) return SKStrokeJoin.Bevel;
+        if (join == SPStrokeJoin.ROUND) return SKStrokeJoin.Round;
+        return SKStrokeJoin.Miter;
     }
 }

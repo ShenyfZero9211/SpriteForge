@@ -4,13 +4,20 @@ using SpriteCore.Scripting;
 using SpriteCore.Time;
 using SpriteCore.Utils;
 using SpriteCore.Window;
+using SpriteEngine.Framework;
 using SDL2;
 
 class Program
 {
     static void Main(string[] args)
     {
-        // 判断模式
+        // 判断模式（优先级：--framework > --sketch > .lua > 自动发现）
+        if (args.Length > 0 && args[0] == "--framework" && args.Length > 1)
+        {
+            RunFrameworkByName(args[1]);
+            return;
+        }
+
         if (args.Length > 0 && args[0].EndsWith(".lua", StringComparison.OrdinalIgnoreCase))
         {
             RunLua(args[0]);
@@ -20,6 +27,14 @@ class Program
         if (args.Length > 0 && args[0] == "--sketch" && args.Length > 1)
         {
             RunSketchByName(args[1]);
+            return;
+        }
+
+        // 自动发现 SPframework 子类（优先）
+        var fwType = FindFrameworkType();
+        if (fwType != null)
+        {
+            RunFramework(fwType);
             return;
         }
 
@@ -33,6 +48,45 @@ class Program
 
         // 回退到默认 Lua 示例
         RunLua("samples/01_HelloSprite/main.lua");
+    }
+
+    // ── SPframework 模式 ──
+
+    static Type? FindFrameworkType()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var fwTypes = assembly.GetTypes()
+            .Where(t => t.IsSubclassOf(typeof(SPframework)) && !t.IsAbstract)
+            .ToList();
+
+        if (fwTypes.Count == 0) return null;
+        if (fwTypes.Count == 1) return fwTypes[0];
+        return fwTypes.OrderBy(t => t.Name).First();
+    }
+
+    static void RunFrameworkByName(string name)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var type = assembly.GetTypes()
+            .FirstOrDefault(t => t.IsSubclassOf(typeof(SPframework))
+                && !t.IsAbstract
+                && (t.Name == name || t.FullName == name));
+
+        if (type == null)
+        {
+            Log.Initialize();
+            Log.Error("Launcher", $"Framework not found: {name}");
+            Log.Info("Launcher", "Usage: SpriteLauncher --framework <ClassName>");
+            return;
+        }
+
+        RunFramework(type);
+    }
+
+    static void RunFramework(Type fwType)
+    {
+        var fw = (SPframework)Activator.CreateInstance(fwType)!;
+        fw.Launch();
     }
 
     // ── C# Sketch 模式 ──

@@ -1,3 +1,5 @@
+using SpriteCore.Graphics;
+
 namespace SpriteEngine.Scenes;
 
 /// <summary>
@@ -68,4 +70,7 @@ public class SceneManager
 
     /// <summary>固定更新当前场景</summary>
     public void FixedUpdate(float fixedDt) => _activeScene?.FixedUpdate(fixedDt);
+
+    /// <summary>渲染当前场景（使用 SP5.Graphics）</summary>
+    public void Render() => _activeScene?.Render(SP5.Graphics);
 }

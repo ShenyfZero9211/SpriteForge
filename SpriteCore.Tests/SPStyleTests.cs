@@ -16,13 +16,16 @@ public class SPStyleTests
         Assert.True(s.Stroke);
         Assert.Equal(SKColors.Black, s.StrokeColor);
         Assert.Equal(1, s.StrokeWeight);
-        Assert.Equal(SKStrokeCap.Round, s.StrokeCap);
-        Assert.Equal(SKStrokeJoin.Miter, s.StrokeJoin);
+        Assert.Equal(SPStrokeCap.ROUND, s.StrokeCap);
+        Assert.Equal(SPStrokeJoin.MITER, s.StrokeJoin);
         Assert.Equal(16, s.TextSize);
-        Assert.Equal(SKTextAlign.Left, s.TextAlign);
-        Assert.Equal(0, s.ColorMode);
-        Assert.Equal(0, s.RectMode);
-        Assert.Equal(0, s.EllipseMode);
+        Assert.Equal(SPTextAlignH.LEFT, s.TextAlignH);
+        Assert.Equal(SPTextAlignV.BASELINE, s.TextAlignV);
+        Assert.Equal(SPColorMode.RGB, s.ColorMode);
+        Assert.Equal(SPRectMode.CORNER, s.RectMode);
+        Assert.Equal(SPEllipseMode.CENTER, s.EllipseMode);
+        Assert.Equal(SPImageMode.CORNER, s.ImageMode);
+        Assert.False(s.IsTinted);
     }
 
     [Fact]
@@ -59,17 +62,21 @@ public class SPStyleTests
             Stroke = false,
             StrokeColor = new SKColor(5, 6, 7, 8),
             StrokeWeight = 3.5f,
-            StrokeCap = SKStrokeCap.Square,
-            StrokeJoin = SKStrokeJoin.Round,
+            StrokeCap = SPStrokeCap.SQUARE,
+            StrokeJoin = SPStrokeJoin.ROUND,
             TextSize = 42,
-            TextAlign = SKTextAlign.Center,
-            ColorMode = 1,
+            TextAlignH = SPTextAlignH.CENTER,
+            TextAlignV = SPTextAlignV.TOP,
+            ColorMode = SPColorMode.HSB,
             ColorModeX = 100,
             ColorModeY = 200,
             ColorModeZ = 300,
             ColorModeA = 400,
-            RectMode = 2,
-            EllipseMode = 3
+            RectMode = SPRectMode.RADIUS,
+            EllipseMode = SPEllipseMode.CORNERS,
+            ImageMode = SPImageMode.CENTER,
+            IsTinted = true,
+            TintColor = new SKColor(255, 128, 64)
         };
 
         var copy = original.Clone();
@@ -82,7 +89,8 @@ public class SPStyleTests
         Assert.Equal(original.StrokeCap, copy.StrokeCap);
         Assert.Equal(original.StrokeJoin, copy.StrokeJoin);
         Assert.Equal(original.TextSize, copy.TextSize);
-        Assert.Equal(original.TextAlign, copy.TextAlign);
+        Assert.Equal(original.TextAlignH, copy.TextAlignH);
+        Assert.Equal(original.TextAlignV, copy.TextAlignV);
         Assert.Equal(original.ColorMode, copy.ColorMode);
         Assert.Equal(original.ColorModeX, copy.ColorModeX);
         Assert.Equal(original.ColorModeY, copy.ColorModeY);
@@ -90,5 +98,8 @@ public class SPStyleTests
         Assert.Equal(original.ColorModeA, copy.ColorModeA);
         Assert.Equal(original.RectMode, copy.RectMode);
         Assert.Equal(original.EllipseMode, copy.EllipseMode);
+        Assert.Equal(original.ImageMode, copy.ImageMode);
+        Assert.Equal(original.IsTinted, copy.IsTinted);
+        Assert.Equal(original.TintColor, copy.TintColor);
     }
 }

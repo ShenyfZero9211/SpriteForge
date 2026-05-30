@@ -49,8 +49,21 @@ public abstract class SPGraphics
     public virtual void NoStroke() => CurrentStyle.Stroke = false;
 
     public virtual void StrokeWeight(float weight) => CurrentStyle.StrokeWeight = weight;
-    public virtual void StrokeCap(SKStrokeCap cap) => CurrentStyle.StrokeCap = cap;
-    public virtual void StrokeJoin(SKStrokeJoin join) => CurrentStyle.StrokeJoin = join;
+    public virtual void StrokeCap(SPStrokeCap cap) => CurrentStyle.StrokeCap = cap;
+    public virtual void StrokeJoin(SPStrokeJoin join) => CurrentStyle.StrokeJoin = join;
+
+    // ── 形状模式 ──
+    public virtual void RectMode(SPRectMode mode) => CurrentStyle.RectMode = mode;
+    public virtual void EllipseMode(SPEllipseMode mode) => CurrentStyle.EllipseMode = mode;
+    public virtual void ImageMode(SPImageMode mode) => CurrentStyle.ImageMode = mode;
+
+    // ── 文字对齐 ──
+    public virtual void TextAlign(SPTextAlignH alignH) => CurrentStyle.TextAlignH = alignH;
+    public virtual void TextAlign(SPTextAlignH alignH, SPTextAlignV alignV)
+    {
+        CurrentStyle.TextAlignH = alignH;
+        CurrentStyle.TextAlignV = alignV;
+    }
 
     // ── 样式栈 ──
     public virtual void PushStyle() => _styleStack.Push(CurrentStyle.Clone());
@@ -79,8 +92,16 @@ public abstract class SPGraphics
     public abstract void Line(float x1, float y1, float x2, float y2);
     public abstract void Triangle(float x1, float y1, float x2, float y2, float x3, float y3);
 
+    // ── 新增绘制方法 ──
+    public abstract void Point(float x, float y);
+    public abstract void Quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
+    public abstract void Arc(float x, float y, float w, float h, float start, float stop);
+
+    // ── 文字 ──
     public abstract void TextSize(float size);
     public abstract void Text(string str, float x, float y);
+
+    // ── 图像 ──
     public abstract void Image(SKBitmap bitmap, float x, float y);
     public abstract void Image(SPTexture texture, float x, float y);
     public abstract void Image(SPTexture texture, float x, float y, float w, float h);

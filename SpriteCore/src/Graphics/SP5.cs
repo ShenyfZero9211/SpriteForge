@@ -1,4 +1,5 @@
 using SkiaSharp;
+using NLua;
 using SpriteCore.Window;
 
 namespace SpriteCore.Graphics;
@@ -38,14 +39,37 @@ public static class SP5
     public static void NoStroke() => Graphics?.NoStroke();
     public static void NoFill() => Graphics?.NoFill();
     public static void StrokeWeight(float weight) => Graphics?.StrokeWeight(weight);
+    public static void StrokeCap(int cap) => Graphics?.StrokeCap((SPStrokeCap)cap);
+    public static void StrokeJoin(int join) => Graphics?.StrokeJoin((SPStrokeJoin)join);
+
+    // ── 形状模式 ──
+    public static void RectMode(int mode) => Graphics?.RectMode((SPRectMode)mode);
+    public static void EllipseMode(int mode) => Graphics?.EllipseMode((SPEllipseMode)mode);
+    public static void ImageMode(int mode) => Graphics?.ImageMode((SPImageMode)mode);
+
+    // ── 文字对齐 ──
+    public static void TextAlign(int alignH) => Graphics?.TextAlign((SPTextAlignH)alignH);
+    public static void TextAlign(int alignH, int alignV)
+        => Graphics?.TextAlign((SPTextAlignH)alignH, (SPTextAlignV)alignV);
+
+    // ── 样式栈 ──
+    public static void PushStyle() => Graphics?.PushStyle();
+    public static void PopStyle() => Graphics?.PopStyle();
 
     // ── 形状 ──
     public static void Rect(float x, float y, float w, float h) => Graphics?.Rect(x, y, w, h);
+    public static void RoundRect(float x, float y, float w, float h, float r)
+        => Graphics?.RoundRect(x, y, w, h, r);
     public static void Ellipse(float x, float y, float w, float h) => Graphics?.Ellipse(x, y, w, h);
     public static void Circle(float x, float y, float r) => Graphics?.Circle(x, y, r);
     public static void Line(float x1, float y1, float x2, float y2) => Graphics?.Line(x1, y1, x2, y2);
     public static void Triangle(float x1, float y1, float x2, float y2, float x3, float y3)
         => Graphics?.Triangle(x1, y1, x2, y2, x3, y3);
+    public static void Point(float x, float y) => Graphics?.Point(x, y);
+    public static void Quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+        => Graphics?.Quad(x1, y1, x2, y2, x3, y3, x4, y4);
+    public static void Arc(float x, float y, float w, float h, float start, float stop)
+        => Graphics?.Arc(x, y, w, h, start, stop);
 
     // ── 变换 ──
     public static void PushMatrix() => Graphics?.PushMatrix();
@@ -62,7 +86,8 @@ public static class SP5
     public static SPTexture LoadImage(string path) => SPTexture.Load(path);
     public static void Image(SKBitmap bitmap, float x, float y) => Graphics?.Image(bitmap, x, y);
     public static void Image(SPTexture texture, float x, float y) => Graphics?.Image(texture, x, y);
-    public static void Image(SPTexture texture, float x, float y, float w, float h) => Graphics?.Image(texture, x, y, w, h);
+    public static void Image(SPTexture texture, float x, float y, float w, float h)
+        => Graphics?.Image(texture, x, y, w, h);
     public static void Tint(float gray, float alpha = 255) => Graphics?.Tint(gray, alpha);
     public static void Tint(float r, float g, float b, float a = 255) => Graphics?.Tint(r, g, b, a);
     public static void NoTint() => Graphics?.NoTint();
@@ -92,6 +117,50 @@ public static class SP5
     {
         if (g < 0) Stroke(r);
         else Stroke(r, g, b, a);
+    }
+
+    public static void LuaTint(float r, float g = -1, float b = -1, float a = 255)
+    {
+        if (g < 0) Tint(r, a);
+        else Tint(r, g, b, a);
+    }
+
+    public static void LuaImage(SPTexture texture, float x, float y, float w = -1, float h = -1)
+    {
+        if (w < 0 || h < 0) Image(texture, x, y);
+        else Image(texture, x, y, w, h);
+    }
+
+    public static void LuaTextAlign(float h, float v = -1)
+    {
+        if (v < 0) TextAlign((int)h);
+        else TextAlign((int)h, (int)v);
+    }
+
+    // ── Lua 常量注册 ──
+    public static void RegisterConstants(Lua lua)
+    {
+        lua["CORNER"] = (int)SPRectMode.CORNER;
+        lua["CORNERS"] = (int)SPRectMode.CORNERS;
+        lua["RADIUS"] = (int)SPRectMode.RADIUS;
+        lua["CENTER"] = (int)SPRectMode.CENTER;
+
+        lua["LEFT"] = (int)SPTextAlignH.LEFT;
+        lua["RIGHT"] = (int)SPTextAlignH.RIGHT;
+
+        lua["TOP"] = (int)SPTextAlignV.TOP;
+        lua["BOTTOM"] = (int)SPTextAlignV.BOTTOM;
+        lua["BASELINE"] = (int)SPTextAlignV.BASELINE;
+
+        lua["SQUARE"] = (int)SPStrokeCap.SQUARE;
+        lua["ROUND"] = (int)SPStrokeCap.ROUND;
+        lua["PROJECT"] = (int)SPStrokeCap.PROJECT;
+
+        lua["MITER"] = (int)SPStrokeJoin.MITER;
+        lua["BEVEL"] = (int)SPStrokeJoin.BEVEL;
+
+        lua["RGB"] = (int)SPColorMode.RGB;
+        lua["HSB"] = (int)SPColorMode.HSB;
     }
 
     // ── 环境 ──

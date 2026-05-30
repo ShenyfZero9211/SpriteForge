@@ -15,13 +15,14 @@ public abstract class Sketch
     // 内部引用，由 SketchApp 注入
     internal GameWindow? AppWindow { get; set; }
     internal SkiaGraphics? AppGraphics { get; set; }
-    internal InputSystem? AppInput { get; set; }
-    internal AudioSystem? AppAudio { get; set; }
+    public InputSystem? AppInput { get; internal set; }
+    public AudioSystem? AppAudio { get; internal set; }
 
     // ── 生命周期（子类可 override）──
     public virtual void Setup() { }
     public virtual void Draw() { }
     public virtual void Update(float dt) { }
+    public virtual void Dispose() { }
 
     // ── 尺寸 ──
     public void Size(int width, int height)
@@ -44,13 +45,29 @@ public abstract class Sketch
     public void NoStroke() => SP5.NoStroke();
     public void NoFill() => SP5.NoFill();
     public void StrokeWeight(float weight) => SP5.StrokeWeight(weight);
+    public void StrokeCap(int cap) => SP5.StrokeCap(cap);
+    public void StrokeJoin(int join) => SP5.StrokeJoin(join);
+
+    public void RectMode(int mode) => SP5.RectMode(mode);
+    public void EllipseMode(int mode) => SP5.EllipseMode(mode);
+    public void ImageMode(int mode) => SP5.ImageMode(mode);
+    public void TextAlign(int alignH) => SP5.TextAlign(alignH);
+    public void TextAlign(int alignH, int alignV) => SP5.TextAlign(alignH, alignV);
+    public void PushStyle() => SP5.PushStyle();
+    public void PopStyle() => SP5.PopStyle();
 
     public void Rect(float x, float y, float w, float h) => SP5.Rect(x, y, w, h);
+    public void RoundRect(float x, float y, float w, float h, float r) => SP5.RoundRect(x, y, w, h, r);
     public void Ellipse(float x, float y, float w, float h) => SP5.Ellipse(x, y, w, h);
     public void Circle(float x, float y, float r) => SP5.Circle(x, y, r);
     public void Line(float x1, float y1, float x2, float y2) => SP5.Line(x1, y1, x2, y2);
     public void Triangle(float x1, float y1, float x2, float y2, float x3, float y3)
         => SP5.Triangle(x1, y1, x2, y2, x3, y3);
+    public void Point(float x, float y) => SP5.Point(x, y);
+    public void Quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+        => SP5.Quad(x1, y1, x2, y2, x3, y3, x4, y4);
+    public void Arc(float x, float y, float w, float h, float start, float stop)
+        => SP5.Arc(x, y, w, h, start, stop);
 
     public void PushMatrix() => SP5.PushMatrix();
     public void PopMatrix() => SP5.PopMatrix();

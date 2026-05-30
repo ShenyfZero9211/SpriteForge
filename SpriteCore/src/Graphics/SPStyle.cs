@@ -16,23 +16,25 @@ public class SPStyle
     public bool Stroke { get; set; } = true;
     public SKColor StrokeColor { get; set; } = SKColors.Black;
     public float StrokeWeight { get; set; } = 1;
-    public SKStrokeCap StrokeCap { get; set; } = SKStrokeCap.Round;
-    public SKStrokeJoin StrokeJoin { get; set; } = SKStrokeJoin.Miter;
+    public SPStrokeCap StrokeCap { get; set; } = SPStrokeCap.ROUND;
+    public SPStrokeJoin StrokeJoin { get; set; } = SPStrokeJoin.MITER;
 
     // Text
     public float TextSize { get; set; } = 16;
-    public SKTextAlign TextAlign { get; set; } = SKTextAlign.Left;
+    public SPTextAlignH TextAlignH { get; set; } = SPTextAlignH.LEFT;
+    public SPTextAlignV TextAlignV { get; set; } = SPTextAlignV.BASELINE;
 
     // Color mode (预留：将来支持 HSB)
-    public int ColorMode { get; set; } = 0; // 0=RGB, 1=HSB
+    public SPColorMode ColorMode { get; set; } = SPColorMode.RGB;
     public float ColorModeX { get; set; } = 255;
     public float ColorModeY { get; set; } = 255;
     public float ColorModeZ { get; set; } = 255;
     public float ColorModeA { get; set; } = 255;
 
-    // Shape mode (预留：将来支持 rectMode/ellipseMode)
-    public int RectMode { get; set; } = 0;   // 0=CORNER
-    public int EllipseMode { get; set; } = 0; // 0=CENTER
+    // Shape mode
+    public SPRectMode RectMode { get; set; } = SPRectMode.CORNER;
+    public SPEllipseMode EllipseMode { get; set; } = SPEllipseMode.CENTER;
+    public SPImageMode ImageMode { get; set; } = SPImageMode.CORNER;
 
     // Tint (对应 Processing tint())
     public bool IsTinted { get; set; } = false;
@@ -50,7 +52,8 @@ public class SPStyle
             StrokeCap = StrokeCap,
             StrokeJoin = StrokeJoin,
             TextSize = TextSize,
-            TextAlign = TextAlign,
+            TextAlignH = TextAlignH,
+            TextAlignV = TextAlignV,
             ColorMode = ColorMode,
             ColorModeX = ColorModeX,
             ColorModeY = ColorModeY,
@@ -58,6 +61,7 @@ public class SPStyle
             ColorModeA = ColorModeA,
             RectMode = RectMode,
             EllipseMode = EllipseMode,
+            ImageMode = ImageMode,
             IsTinted = IsTinted,
             TintColor = TintColor,
         };

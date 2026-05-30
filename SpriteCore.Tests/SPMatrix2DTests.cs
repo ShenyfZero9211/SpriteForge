@@ -140,6 +140,9 @@ public class SPMatrix2DTests
         public override void Circle(float x, float y, float r) { }
         public override void Line(float x1, float y1, float x2, float y2) { }
         public override void Triangle(float x1, float y1, float x2, float y2, float x3, float y3) { }
+        public override void Point(float x, float y) { }
+        public override void Quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) { }
+        public override void Arc(float x, float y, float w, float h, float start, float stop) { }
         public override void TextSize(float size) { }
         public override void Text(string str, float x, float y) { }
         public override void Image(SkiaSharp.SKBitmap bitmap, float x, float y) { }

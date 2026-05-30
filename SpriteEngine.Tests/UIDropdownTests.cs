@@ -43,7 +43,9 @@ public class UIDropdownTests
         dd.Measure();
 
         // Measure 始终只返回头部高度，不随展开状态变化
-        float headerH = Math.Max(28, 14 * 1.4f); // fontSize=14 default
+        // headerH = max(ItemHeight, fontSize*1.4f + Padding.Vertical)
+        // Padding.Vertical = 16 (default 8+8)
+        float headerH = Math.Max(28, 14 * 1.4f + 16);
         Assert.True(dd.DesiredHeight <= headerH + 1);
     }
 

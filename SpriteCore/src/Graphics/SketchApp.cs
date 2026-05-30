@@ -16,9 +16,11 @@ public class SketchApp : IDisposable
     private InputSystem? _input;
     private GameTimer? _timer;
     private AudioSystem? _audio;
+    private Sketch? _sketch;
 
     public void Run(Sketch sketch, string title = "SpriteForge Sketch", int defaultWidth = 800, int defaultHeight = 600)
     {
+        _sketch = sketch;
         Log.Initialize();
 
         _window = new GameWindow();
@@ -99,6 +101,7 @@ public class SketchApp : IDisposable
 
     public void Dispose()
     {
+        _sketch?.Dispose();
         _audio?.Dispose();
         _input?.Dispose();
         _graphics?.Dispose();

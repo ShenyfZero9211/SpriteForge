@@ -28,6 +28,7 @@ public class ScriptEngine : IDisposable
         RegisterMathAPI();
         RegisterAudioAPI();
         RegisterLogAPI();
+        SP5.RegisterConstants(_lua);
     }
 
     public void LoadScript(string code)
@@ -79,6 +80,7 @@ public class ScriptEngine : IDisposable
     {
         if (_lua == null) return;
 
+        // Color
         _lua.RegisterFunction("background", null, typeof(SP5).GetMethod("LuaBackground")!);
         _lua.RegisterFunction("fill", null, typeof(SP5).GetMethod("LuaFill")!);
         _lua.RegisterFunction("stroke", null, typeof(SP5).GetMethod("LuaStroke")!);
@@ -86,21 +88,49 @@ public class ScriptEngine : IDisposable
         _lua.RegisterFunction("noFill", null, typeof(SP5).GetMethod("NoFill")!);
         _lua.RegisterFunction("strokeWeight", null, typeof(SP5).GetMethod("StrokeWeight")!);
 
+        // Style stack
+        _lua.RegisterFunction("pushStyle", null, typeof(SP5).GetMethod("PushStyle")!);
+        _lua.RegisterFunction("popStyle", null, typeof(SP5).GetMethod("PopStyle")!);
+
+        // Shape modes
+        _lua.RegisterFunction("rectMode", null, typeof(SP5).GetMethod("RectMode")!);
+        _lua.RegisterFunction("ellipseMode", null, typeof(SP5).GetMethod("EllipseMode")!);
+        _lua.RegisterFunction("imageMode", null, typeof(SP5).GetMethod("ImageMode")!);
+
+        // Stroke appearance
+        _lua.RegisterFunction("strokeCap", null, typeof(SP5).GetMethod("StrokeCap")!);
+        _lua.RegisterFunction("strokeJoin", null, typeof(SP5).GetMethod("StrokeJoin")!);
+
+        // Text
+        _lua.RegisterFunction("text", null, typeof(SP5).GetMethod("Text")!);
+        _lua.RegisterFunction("textSize", null, typeof(SP5).GetMethod("TextSize")!);
+        _lua.RegisterFunction("textAlign", null, typeof(SP5).GetMethod("LuaTextAlign")!);
+
+        // Shapes
         _lua.RegisterFunction("rect", null, typeof(SP5).GetMethod("Rect")!);
         _lua.RegisterFunction("ellipse", null, typeof(SP5).GetMethod("Ellipse")!);
         _lua.RegisterFunction("circle", null, typeof(SP5).GetMethod("Circle")!);
         _lua.RegisterFunction("line", null, typeof(SP5).GetMethod("Line")!);
         _lua.RegisterFunction("triangle", null, typeof(SP5).GetMethod("Triangle")!);
+        _lua.RegisterFunction("point", null, typeof(SP5).GetMethod("Point")!);
+        _lua.RegisterFunction("quad", null, typeof(SP5).GetMethod("Quad")!);
+        _lua.RegisterFunction("arc", null, typeof(SP5).GetMethod("Arc")!);
+        _lua.RegisterFunction("roundRect", null, typeof(SP5).GetMethod("RoundRect")!);
 
+        // Transform
         _lua.RegisterFunction("pushMatrix", null, typeof(SP5).GetMethod("PushMatrix")!);
         _lua.RegisterFunction("popMatrix", null, typeof(SP5).GetMethod("PopMatrix")!);
         _lua.RegisterFunction("translate", null, typeof(SP5).GetMethod("Translate")!);
         _lua.RegisterFunction("rotate", null, typeof(SP5).GetMethod("Rotate")!);
         _lua.RegisterFunction("scale", null, typeof(SP5).GetMethod("Scale")!);
 
-        _lua.RegisterFunction("text", null, typeof(SP5).GetMethod("Text")!);
-        _lua.RegisterFunction("textSize", null, typeof(SP5).GetMethod("TextSize")!);
+        // Image
+        _lua.RegisterFunction("loadImage", null, typeof(SP5).GetMethod("LoadImage")!);
+        _lua.RegisterFunction("image", null, typeof(SP5).GetMethod("LuaImage")!);
+        _lua.RegisterFunction("tint", null, typeof(SP5).GetMethod("LuaTint")!);
+        _lua.RegisterFunction("noTint", null, typeof(SP5).GetMethod("NoTint")!);
 
+        // Environment
         _lua.RegisterFunction("width", null, typeof(SP5).GetMethod("GetWidth")!);
         _lua.RegisterFunction("height", null, typeof(SP5).GetMethod("GetHeight")!);
         _lua.RegisterFunction("millis", null, typeof(SP5).GetMethod("Millis")!);
