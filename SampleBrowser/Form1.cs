@@ -444,17 +444,50 @@ public partial class Form1 : Form
 
     // ── 公共 ──
 
-    private static void StartProcess(string arguments)
+    private static string FindDotNetPath()
+    {
+        // 优先查找用户目录下的 .NET SDK（通常是新安装的版本）
+        string[] candidates = new[]
+        {
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".dotnet", "dotnet.exe"),
+            Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles") ?? @"C:\Program Files", "dotnet", "dotnet.exe"),
+            Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles(x86)") ?? @"C:\Program Files (x86)", "dotnet", "dotnet.exe"),
+            "dotnet"
+        };
+
+        foreach (var candidate in candidates)
+        {
+            if (candidate == "dotnet") return candidate; // 依赖 PATH
+            if (File.Exists(candidate)) return candidate;
+        }
+
+        return "dotnet";
+    }
+
+    private void StartProcess(string arguments)
     {
         try
         {
             var psi = new ProcessStartInfo
             {
-                FileName = "dotnet",
+                FileName = FindDotNetPath(),
                 Arguments = arguments,
                 UseShellExecute = false,
-                CreateNoWindow = false
+                CreateNoWindow = false,
+                WorkingDirectory = _spriteLauncherDir
             };
+
+            // 如果找到的是用户目录下的 dotnet，确保子进程 PATH 包含该目录
+            var dotnetDir = Path.GetDirectoryName(FindDotNetPath());
+            if (!string.IsNullOrEmpty(dotnetDir) && dotnetDir != "dotnet")
+            {
+                var currentPath = psi.EnvironmentVariables["PATH"] ?? Environment.GetEnvironmentVariable("PATH") ?? "";
+                if (!currentPath.Split(Path.PathSeparator).Contains(dotnetDir, StringComparer.OrdinalIgnoreCase))
+                {
+                    psi.EnvironmentVariables["PATH"] = dotnetDir + Path.PathSeparator + currentPath;
+                }
+            }
+
             using var process = Process.Start(psi);
         }
         catch (Exception ex)
