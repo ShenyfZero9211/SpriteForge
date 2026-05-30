@@ -18,6 +18,12 @@ public class UIButton : UIElement
     // ── 状态（只读，由事件系统驱动）──
     public bool IsHovered { get; private set; }
     public bool IsPressed { get; private set; }
+    public bool IsFocused { get; private set; }
+
+    public UIButton()
+    {
+        Focusable = true;
+    }
 
     // ── 可选：自定义各状态颜色（null 时使用 ResolvedStyle）──
     public SKColor? NormalColor { get; set; }
@@ -51,10 +57,14 @@ public class UIButton : UIElement
 
         // 绘制边框（可选）
         var style = ResolvedStyle;
-        if (style.BorderThickness > 0)
+        if (style.BorderThickness > 0 || IsFocused)
         {
-            drawList.AddRect(AbsoluteX, AbsoluteY, Width, Height, style.BorderColor,
-                style.BorderThickness, radius);
+            var borderColor = IsFocused
+                ? new SKColor(100, 160, 255)
+                : style.BorderColor;
+            float borderThickness = IsFocused ? 2 : style.BorderThickness;
+            drawList.AddRect(AbsoluteX, AbsoluteY, Width, Height, borderColor,
+                borderThickness, radius);
         }
 
         // 绘制文本（在 Padding 区域内居中）
@@ -141,6 +151,36 @@ public class UIButton : UIElement
                     {
                         OnClick?.Invoke();
                     }
+                    return true;
+                }
+                break;
+
+            case UIEventType.FocusGained:
+                IsFocused = true;
+                return true;
+
+            case UIEventType.FocusLost:
+                IsFocused = false;
+                IsPressed = false; // 失去焦点时清除按下状态
+                return true;
+
+            case UIEventType.KeyPressed:
+                if (evt.KeyCode == (int)SDL2.SDL.SDL_Keycode.SDLK_SPACE ||
+                    evt.KeyCode == (int)SDL2.SDL.SDL_Keycode.SDLK_RETURN ||
+                    evt.KeyCode == (int)SDL2.SDL.SDL_Keycode.SDLK_KP_ENTER)
+                {
+                    IsPressed = true;
+                    return true;
+                }
+                break;
+
+            case UIEventType.KeyReleased:
+                if (IsPressed && (evt.KeyCode == (int)SDL2.SDL.SDL_Keycode.SDLK_SPACE ||
+                    evt.KeyCode == (int)SDL2.SDL.SDL_Keycode.SDLK_RETURN ||
+                    evt.KeyCode == (int)SDL2.SDL.SDL_Keycode.SDLK_KP_ENTER))
+                {
+                    IsPressed = false;
+                    OnClick?.Invoke();
                     return true;
                 }
                 break;

@@ -262,4 +262,82 @@ public class UIButtonTests
         var color = (SKColor)method!.Invoke(btn, null)!;
         Assert.Equal(new SKColor(255, 0, 0), color);
     }
+
+    [Fact]
+    public void Default_Focusable_IsTrue()
+    {
+        var btn = new UIButton();
+        Assert.True(btn.Focusable);
+    }
+
+    [Fact]
+    public void FocusGained_SetsIsFocused()
+    {
+        var btn = new UIButton();
+        btn.OnEvent(UIEvent.FocusGained());
+        Assert.True(btn.IsFocused);
+    }
+
+    [Fact]
+    public void FocusLost_ClearsIsFocused()
+    {
+        var btn = new UIButton();
+        btn.OnEvent(UIEvent.FocusGained());
+        btn.OnEvent(UIEvent.FocusLost());
+        Assert.False(btn.IsFocused);
+    }
+
+    [Fact]
+    public void KeyPressed_Space_SetsPressed()
+    {
+        var btn = new UIButton { Text = "OK" };
+        btn.OnEvent(UIEvent.FocusGained());
+
+        var consumed = btn.OnEvent(UIEvent.KeyPressed('\0', (int)SDL2.SDL.SDL_Keycode.SDLK_SPACE));
+
+        Assert.True(consumed);
+        Assert.True(btn.IsPressed);
+    }
+
+    [Fact]
+    public void KeyReleased_Space_TriggersClick()
+    {
+        var btn = new UIButton { Text = "OK" };
+        bool clicked = false;
+        btn.OnClick += () => clicked = true;
+        btn.OnEvent(UIEvent.FocusGained());
+        btn.OnEvent(UIEvent.KeyPressed('\0', (int)SDL2.SDL.SDL_Keycode.SDLK_SPACE));
+
+        var consumed = btn.OnEvent(UIEvent.KeyReleased('\0', (int)SDL2.SDL.SDL_Keycode.SDLK_SPACE));
+
+        Assert.True(consumed);
+        Assert.True(clicked);
+        Assert.False(btn.IsPressed);
+    }
+
+    [Fact]
+    public void KeyPressed_Return_SetsPressed()
+    {
+        var btn = new UIButton { Text = "OK" };
+        btn.OnEvent(UIEvent.FocusGained());
+
+        var consumed = btn.OnEvent(UIEvent.KeyPressed('\0', (int)SDL2.SDL.SDL_Keycode.SDLK_RETURN));
+
+        Assert.True(consumed);
+        Assert.True(btn.IsPressed);
+    }
+
+    [Fact]
+    public void FocusLost_ClearsPressedState()
+    {
+        var btn = new UIButton { Text = "OK" };
+        btn.OnEvent(UIEvent.FocusGained());
+        btn.OnEvent(UIEvent.KeyPressed('\0', (int)SDL2.SDL.SDL_Keycode.SDLK_SPACE));
+        Assert.True(btn.IsPressed);
+
+        btn.OnEvent(UIEvent.FocusLost());
+
+        Assert.False(btn.IsPressed);
+        Assert.False(btn.IsFocused);
+    }
 }

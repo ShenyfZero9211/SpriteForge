@@ -94,6 +94,21 @@ public abstract class UIElement : Component
     /// <summary>处理 UI 事件。返回 true 表示事件已消费，停止冒泡。</summary>
     public virtual bool OnEvent(UIEvent evt) => false;
 
+    // ── 状态存储 ──
+
+    /// <summary>获取此元素所在画布的状态存储。如果不在任何画布下则返回 null。</summary>
+    public UIStateStorage? GetStateStorage()
+    {
+        UIElement? current = this;
+        while (current != null)
+        {
+            if (current is UICanvas canvas)
+                return canvas.StateStorage;
+            current = current.Parent;
+        }
+        return null;
+    }
+
     // ── 命中测试 ──
 
     public virtual bool ContainsPoint(float x, float y)

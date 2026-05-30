@@ -20,7 +20,7 @@ public class UICanvas : UIContainer
     internal UIDrawList DrawList { get; } = new();
 
     /// <summary>此画布专用的状态存储</summary>
-    internal UIStateStorage StateStorage { get; } = new();
+    public UIStateStorage StateStorage { get; } = new();
 
     // ── 渲染 ──
 

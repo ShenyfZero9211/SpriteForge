@@ -114,7 +114,12 @@ public class UIManager
         if (mousePressed && !_lastMousePressed)
         {
             var consumed = DispatchToCanvases(UIEvent.MousePressed(mx, my, 0), mx, my);
-            if (consumed) _pressedTarget = FindHitTarget(mx, my);
+            if (consumed)
+            {
+                _pressedTarget = FindHitTarget(mx, my);
+                if (_pressedTarget != null && _pressedTarget.Focusable)
+                    _focusManager.SetFocused(_pressedTarget);
+            }
         }
 
         // 生成鼠标释放事件

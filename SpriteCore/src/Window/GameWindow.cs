@@ -73,6 +73,8 @@ public class GameWindow : IDisposable
             Log.Error("Window", $"SDL_CreateTexture failed: {SDL.SDL_GetError()}");
             throw new Exception($"SDL_CreateTexture failed: {SDL.SDL_GetError()}");
         }
+
+        SDL.SDL_StartTextInput();
     }
 
     public void Run()
@@ -139,6 +141,7 @@ public class GameWindow : IDisposable
 
     public void Dispose()
     {
+        SDL.SDL_StopTextInput();
         if (_texture != IntPtr.Zero) SDL.SDL_DestroyTexture(_texture);
         if (_renderer != IntPtr.Zero) SDL.SDL_DestroyRenderer(_renderer);
         if (_window != IntPtr.Zero) SDL.SDL_DestroyWindow(_window);

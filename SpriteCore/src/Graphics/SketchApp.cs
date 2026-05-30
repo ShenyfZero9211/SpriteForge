@@ -67,7 +67,6 @@ public class SketchApp : IDisposable
         _window.OnUpdate += () =>
         {
             _timer!.Update();
-            _input!.PostUpdate();
             SP5.DeltaTime = _timer.DeltaTime;
             SP5.FrameCount = _timer.FrameCount;
 
@@ -78,6 +77,8 @@ public class SketchApp : IDisposable
             {
                 _window.Stop();
             }
+
+            _input!.PostUpdate();
         };
 
         _window.OnRender += () =>

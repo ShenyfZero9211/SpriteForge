@@ -74,6 +74,19 @@ public class ResourceManager
     }
 
     /// <summary>
+    /// 手动注册一个已创建的资源（不调用 CreateResource）。引用计数设为 1。
+    /// </summary>
+    public void Register<T>(string path, T resource) where T : class, IResource
+    {
+        var fullPath = System.IO.Path.GetFullPath(path);
+        lock (_lock)
+        {
+            _resources[fullPath] = resource;
+            _refCounts[fullPath] = 1;
+        }
+    }
+
+    /// <summary>
     /// 卸载资源。引用计数 -1，归零时真正 Dispose 并移除缓存。
     /// </summary>
     public void Unload(string path)

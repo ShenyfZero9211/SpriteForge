@@ -10,6 +10,7 @@ public class InputSystem : IDisposable
     private readonly bool[] _mouseButtons = new bool[5];
     private readonly bool[] _mouseButtonsDown = new bool[5];
     private readonly bool[] _mouseButtonsUp = new bool[5];
+    private readonly List<char> _textInputQueue = new();
 
     public float MouseX { get; private set; }
     public float MouseY { get; private set; }
@@ -67,6 +68,17 @@ public class InputSystem : IDisposable
             case SDL.SDL_EventType.SDL_MOUSEWHEEL:
                 MouseWheel = e.wheel.y;
                 break;
+
+            case SDL.SDL_EventType.SDL_TEXTINPUT:
+                unsafe
+                {
+                    byte* text = e.text.text;
+                    for (int i = 0; i < 32 && text[i] != 0; i++)
+                    {
+                        _textInputQueue.Add((char)text[i]);
+                    }
+                }
+                break;
         }
     }
 
@@ -74,6 +86,7 @@ public class InputSystem : IDisposable
     {
         _keysDown.Clear();
         _keysUp.Clear();
+        _textInputQueue.Clear();
         Array.Clear(_mouseButtonsDown, 0, _mouseButtonsDown.Length);
         Array.Clear(_mouseButtonsUp, 0, _mouseButtonsUp.Length);
         MouseDeltaX = 0;
@@ -84,6 +97,12 @@ public class InputSystem : IDisposable
     public bool IsKeyPressed(SDL.SDL_Keycode key) => _keysPressed.Contains(key);
     public bool IsKeyDown(SDL.SDL_Keycode key) => _keysDown.Contains(key);
     public bool IsKeyUp(SDL.SDL_Keycode key) => _keysUp.Contains(key);
+
+    /// <summary>本帧刚按下的键码列表（只读快照）</summary>
+    public IReadOnlyCollection<SDL.SDL_Keycode> KeysDown => _keysDown;
+
+    /// <summary>获取本帧通过 SDL_TEXTINPUT 接收到的字符列表</summary>
+    public IReadOnlyList<char> TextInputQueue => _textInputQueue;
     public bool IsMousePressed(int button) => button < _mouseButtons.Length && _mouseButtons[button];
     public bool IsMouseDown(int button) => button < _mouseButtonsDown.Length && _mouseButtonsDown[button];
     public bool IsMouseUp(int button) => button < _mouseButtonsUp.Length && _mouseButtonsUp[button];
