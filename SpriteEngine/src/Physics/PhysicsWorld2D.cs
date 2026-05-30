@@ -101,12 +101,12 @@ public class PhysicsWorld2D
         bool isTrigger = contact.FixtureA.IsSensor || contact.FixtureB.IsSensor;
 
         // 通知 A 方的所有组件
-        var collisionA = new Collision2D(contact, rbA, rbB);
-        DispatchCollision(rbA, collisionA, isTrigger, enter: true);
+        var collisionA = new Collision2D(contact, rbA!, rbB!);
+        DispatchCollision(rbA!, collisionA, isTrigger, enter: true);
 
         // 通知 B 方的所有组件
-        var collisionB = new Collision2D(contact, rbB, rbA);
-        DispatchCollision(rbB, collisionB, isTrigger, enter: true);
+        var collisionB = new Collision2D(contact, rbB!, rbA!);
+        DispatchCollision(rbB!, collisionB, isTrigger, enter: true);
 
         return true;
     }
@@ -119,11 +119,11 @@ public class PhysicsWorld2D
 
         bool isTrigger = contact.FixtureA.IsSensor || contact.FixtureB.IsSensor;
 
-        var collisionA = new Collision2D(contact, rbA, rbB);
-        DispatchCollision(rbA, collisionA, isTrigger, enter: false);
+        var collisionA = new Collision2D(contact, rbA!, rbB!);
+        DispatchCollision(rbA!, collisionA, isTrigger, enter: false);
 
-        var collisionB = new Collision2D(contact, rbB, rbA);
-        DispatchCollision(rbB, collisionB, isTrigger, enter: false);
+        var collisionB = new Collision2D(contact, rbB!, rbA!);
+        DispatchCollision(rbB!, collisionB, isTrigger, enter: false);
     }
 
     private void DispatchCollision(RigidBody2D rb, Collision2D collision, bool isTrigger, bool enter)

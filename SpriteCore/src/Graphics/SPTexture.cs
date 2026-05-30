@@ -16,7 +16,7 @@ public class SPTexture : IDisposable
     public int Width => Bitmap.Width;
     public int Height => Bitmap.Height;
 
-    private SPTexture(SKBitmap bitmap)
+    public SPTexture(SKBitmap bitmap)
     {
         Bitmap = bitmap;
     }

@@ -145,8 +145,8 @@ public class SkiaGraphics : SPGraphics, IDisposable
 
     private SKPaint GetTintPaint(SKColor tint)
     {
-        // 使用 BlendMode.Modulate 实现 Processing tint() 语义：
-        // C = Csrc * Ctint, A = Asrc * Atint
+        // 使用 CreateBlendMode + Modulate 实现 Processing tint() 语义。
+        // Skia 使用 premultiplied alpha，因此 alpha 调制会体现在 RGB 上。
         return new SKPaint
         {
             ColorFilter = SKColorFilter.CreateBlendMode(tint, SKBlendMode.Modulate),
